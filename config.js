@@ -1,1 +1,4 @@
-﻿module.exports = { mongoPath: "mongodb://127.0.0.1:27017/charity", port: 3000 };
+﻿module.exports = {
+    mongoPath: "mongodb://" + process.env.SERVICES_PORT_27017_TCP_ADDR + ":27017/charity",
+    port: 3000
+};

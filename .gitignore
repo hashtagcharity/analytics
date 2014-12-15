@@ -5,3 +5,4 @@ analytics.njsproj
 bin/
 obj/
 .ntvs_analysis.dat
+*.log
