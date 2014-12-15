@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "postinstall": "bower install --force-latest",
+    "postinstall": "sudo bower install --allow-root --force-latest",
     "prestart": "npm install",
     "start": "node app"
   },
