@@ -5,3 +5,10 @@ body {
 a {
   color: #00b7ff;
 }
+text {
+  text-anchor: end !important;
+  transform: rotate(-65deg);
+}
+.ac-chart svg {
+  height: 600px !important;
+}
