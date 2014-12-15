@@ -2,8 +2,9 @@
   "name": "Analytics",
   "version": "0.0.1",
   "private": true,
+  "main": "service/server.js",
   "scripts": {
-    "postinstall": "sudo bower install --allow-root --force-latest",
+    "postinstall": "bower install --force-latest",
     "prestart": "npm install",
     "start": "node app"
   },
