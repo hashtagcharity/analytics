@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('hcChart', ['angularCharts'])
+var app = angular.module('hcChart', ['angularCharts']);
 
 angular.module('hcChart')
   .controller('ChartCtrl', function ($scope, $http) {
@@ -15,11 +15,12 @@ angular.module('hcChart')
             position: 'right'
         }
     };
-
+    
     $scope.data = {};
-
+    
     
     $scope.search = function () {
+        $scope.$apply();
         var req = {
             method: 'GET',
             url: '/statistics',
@@ -30,9 +31,9 @@ angular.module('hcChart')
             $scope.data.data = data;
         });
     };
-
+    
     $http.get('/statistics').
     success(function (data, status, headers, config) {
         $scope.data.data = data;
     });
-})
+});
