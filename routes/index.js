@@ -11,16 +11,21 @@ router.get('/', function (req, res) {
     });
 });
 
-Date.prototype.clearTime=function() {
+Date.prototype.clearTime = function () {
     this.setHours(0); this.setMinutes(0); this.setSeconds(0); this.setMilliseconds(0);
 };
+Date.prototype.isValidDate = function isValidDate() {
+    if (Object.prototype.toString.call(this) !== "[object Date]")
+        return false;
+    return !isNaN(this.getTime());
+}
 
 router.get('/statistics', function (req, res) {
     MongoClient.connect(config.mongoPath, function (err, db) {
         if (err) throw err;
         
         console.log("Connected to mongodb on " + config.mongoPath)
-        var subs = db.collection('subscriptions');      
+        var subs = db.collection('subscriptions');
         subs.aggregate([{
                 $project: {
                     year: { $year: "$subscribedAt" },
@@ -98,6 +103,18 @@ router.get('/statistics', function (req, res) {
                 r.y.push(sum);
             });
             
+            var from = new Date(Date.parse(req.query.from));
+            if (from.isValidDate()) {
+                result = _.filter(result, function (r) {
+                    return r.x.getTime() >= from.getTime();
+                });
+            }
+            var to = new Date(Date.parse(req.query.to));
+            if (to.isValidDate()) {
+                result = _.filter(result, function (r) {
+                    return r.x.getTime() <= to.getTime();
+                });
+            }
             _.each(result, function (r) {
                 var date = r.x
                 r.x = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()

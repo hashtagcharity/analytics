@@ -3,24 +3,36 @@
 angular.module('hcChart', ['angularCharts'])
 
 angular.module('hcChart')
-  .controller('ChartCtrl', function($scope, $http) {
+  .controller('ChartCtrl', function ($scope, $http) {
     $scope.config = {
-      title: 'Subscriptions',
-      tooltips: true,
-      labels: false,
-      mouseover: function() {},
-      mouseout: function() {},
-      click: function() {},
-      legend: {
-        display: true,
-        //could be 'left, right'
-        position: 'right'
-      }
+        tooltips: true,
+        labels: false,
+        mouseover: function () { },
+        mouseout: function () { },
+        click: function () { },
+        legend: {
+            display: true,
+            position: 'right'
+        }
     };
+
     $scope.data = {};
+
+    
+    $scope.search = function () {
+        var req = {
+            method: 'GET',
+            url: '/statistics',
+            params: { from: $scope.from, to: $scope.to },
+        };
+        $http(req).
+        success(function (data) {
+            $scope.data.data = data;
+        });
+    };
+
     $http.get('/statistics').
-    success(function(data, status, headers, config) {
-      debugger;
-      $scope.data.data = data;
+    success(function (data, status, headers, config) {
+        $scope.data.data = data;
     });
-  })
+})
