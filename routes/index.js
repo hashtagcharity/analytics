@@ -117,7 +117,7 @@ router.get('/statistics', function (req, res) {
             }
             _.each(result, function (r) {
                 var date = r.x
-                r.x = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()
+                r.x = date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate()
             })
             
             res.send(result);
