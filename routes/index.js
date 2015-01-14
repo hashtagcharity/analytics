@@ -27,6 +27,12 @@ router.get('/statistics', function (req, res) {
         console.log("Connected to mongodb on " + config.mongoPath)
         var subs = db.collection('subscriptions');
         subs.aggregate([{
+                $group:
+ {
+                    _id: "$emailAddress",
+                    subscribedAt: { $first: "$subscribedAt" }
+                }
+            },{
                 $project: {
                     year: { $year: "$subscribedAt" },
                     month: { $month: "$subscribedAt" },
