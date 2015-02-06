@@ -5,8 +5,19 @@
 
   analyticsController.init = function(app) {
     app.get('/', function(req, res) {
-      res.render('index', {
-        title: '#charity Analytics'
+      analyticsServices.getTopUserStatistics(app.db, function(err, result) {
+        if (err) {
+          res.status(500);
+          res.send({
+            error: err
+          });
+        } else {
+          console.log(result);
+          res.render('index', {
+            title: '#charity Analytics',
+            tops: result
+          });
+        }
       });
     });
 
@@ -24,6 +35,6 @@
       });
 
     });
-  }
+  };
 
 }(module.exports));

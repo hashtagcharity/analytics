@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var async = require('async');
 
 Date.prototype.clearTime = function() {
   this.setHours(0);
@@ -13,6 +14,154 @@ Date.prototype.isValidDate = function isValidDate() {
   return !isNaN(this.getTime());
 };
 
+var getTopSkills = function(db, next) {
+  db.collection("users").aggregate([{
+    $unwind: "$linkedin.skills"
+  }, {
+    $match: {
+      "linkedin.skills": {
+        $exists: true
+      }
+    }
+  }, {
+    $group: {
+      _id: "$linkedin.skills",
+      count: {
+        $sum: 1
+      }
+    }
+  }, {
+    $sort: {
+      count: -1
+    }
+  }, {
+    $limit: 10
+  }, {
+    $project: {
+      name: "$_id",
+      count: "$count"
+    }
+  }], next);
+};
+var getTopIndustries = function(db, next) {
+  db.collection("users").aggregate([{
+    $match: {
+      "linkedin.industry": {
+        $exists: true
+      }
+    }
+  }, {
+    $group: {
+      _id: "$linkedin.industry",
+      count: {
+        $sum: 1
+      }
+    }
+  }, {
+    $sort: {
+      count: -1
+    }
+  }, {
+    $limit: 10
+  }, {
+    $project: {
+      name: "$_id",
+      count: "$count"
+    }
+  }], next);
+};
+var getTopCompanies = function(db, next) {
+  db.collection("users").aggregate([{
+    $unwind: "$linkedin.positions"
+  }, {
+    $group: {
+      _id: "$shortId",
+      company: {
+        $first: "$linkedin.positions"
+      }
+    }
+  }, {
+    $match: {
+      "company.companyName": {
+        $exists: true
+      }
+    }
+  }, {
+    $group: {
+      _id: "$company.companyName",
+      count: {
+        $sum: 1
+      }
+    }
+  }, {
+    $sort: {
+      count: -1
+    }
+  }, {
+    $limit: 10
+  }, {
+    $project: {
+      name: "$_id",
+      count: "$count"
+    }
+  }], next);
+};
+var getTopCountries = function(db, next) {
+  db.collection("users").aggregate([{
+    $match: {
+      "linkedin.location": {
+        $exists: true
+      }
+    }
+  }, {
+    $group: {
+      _id: "$linkedin.location",
+      count: {
+        $sum: 1
+      }
+    }
+  }, {
+    $sort: {
+      count: -1
+    }
+  }, {
+    $limit: 10
+  }, {
+    $project: {
+      name: "$_id",
+      count: "$count"
+    }
+  }], next);
+};
+var getTopEducations = function(db, next) {
+  db.collection("users").aggregate([{
+    $unwind: "$linkedin.educations"
+  }, {
+    $match: {
+      "linkedin.educations.schoolName": {
+        $exists: true
+      }
+    }
+  }, {
+    $group: {
+      _id: "$linkedin.educations.schoolName",
+      count: {
+        $sum: 1
+      }
+    }
+  }, {
+    $sort: {
+      count: -1
+    }
+  }, {
+    $limit: 10
+  }, {
+    $project: {
+      name: "$_id",
+      count: "$count"
+    }
+  }], next);
+};
 var self = module.exports = {
   getUserStatistics: function(db, rFrom, rTo, next) {
     var users = db.collection('users');
@@ -131,5 +280,24 @@ var self = module.exports = {
         }
       }
     });
+  },
+  getTopUserStatistics: function(db, next) {
+    async.parallel({
+      skills: function(callback) {
+        getTopSkills(db, callback);
+      },
+      industries: function(callback) {
+        getTopIndustries(db, callback);
+      },
+      companies: function(callback) {
+        getTopCompanies(db, callback);
+      },
+      countries: function(callback) {
+        getTopCountries(db, callback);
+      },
+      educations: function(callback) {
+        getTopEducations(db, callback);
+      }
+    }, next);
   }
 };
