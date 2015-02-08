@@ -317,5 +317,8 @@ var self = module.exports = {
         getTopEducations(db, callback);
       }
     }, next);
+  },
+  getCountryCodes: function(db, next) {
+    db.collection("users").distinct("linkedin.countryCode", next);
   }
 };

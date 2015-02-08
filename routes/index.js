@@ -34,6 +34,21 @@
       });
 
     });
+
+    app.get('/countryCodes', function(req, res) {
+
+      analyticsServices.getCountryCodes(app.db, function(err, result) {
+        if (err) {
+          res.status(500);
+          res.send({
+            error: err
+          });
+        } else {
+          res.send(result);
+        }
+      });
+
+    });
   };
 
 }(module.exports));

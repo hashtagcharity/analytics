@@ -54,5 +54,12 @@ block content
               tr
                 td #{c.name}
                 td #{c.count}
+    .container-fluid
+      h2 Countires of registered users
+      #mapdiv(style="width: 1000px; height: 450px;")
+
 block scripts
-    script(type="text/javascript", src="/js/chartApp.js")
+  script(src="http://cdn.amcharts.com/lib/3/ammap.js",type="text/javascript")
+  script(src="http://cdn.amcharts.com/lib/3/maps/js/worldHigh.js", type="text/javascript")
+  script(src="http://cdn.amcharts.com/lib/3/themes/dark.js", type="text/javascript")
+  script(src="/js/chartApp.js",type="text/javascript")
