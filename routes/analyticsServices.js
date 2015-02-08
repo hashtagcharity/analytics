@@ -1,6 +1,7 @@
 var _ = require('lodash');
 var async = require('async');
 
+var countries = require('./countries');
 Date.prototype.clearTime = function() {
   this.setHours(0);
   this.setMinutes(0);
@@ -109,13 +110,13 @@ var getTopCompanies = function(db, next) {
 var getTopCountries = function(db, next) {
   db.collection("users").aggregate([{
     $match: {
-      "linkedin.location": {
+      "linkedin.countryCode": {
         $exists: true
       }
     }
   }, {
     $group: {
-      _id: "$linkedin.location",
+      _id: "$linkedin.countryCode",
       count: {
         $sum: 1
       }
@@ -131,7 +132,24 @@ var getTopCountries = function(db, next) {
       name: "$_id",
       count: "$count"
     }
-  }], next);
+  }], function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      for (var i = 0; i < result.length; i++) {
+        var country = _.find(countries, function(c) {
+          return c["alpha-2"].toLowerCase() == result[i].name;
+        });
+
+        if (country) {
+          result[i].name = country.name;
+        } else {
+          console.log(result[i].name);
+        }
+      }
+      next(null, result);
+    }
+  });
 };
 var getTopEducations = function(db, next) {
   db.collection("users").aggregate([{

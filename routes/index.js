@@ -12,7 +12,6 @@
             error: err
           });
         } else {
-          console.log(result);
           res.render('index', {
             title: '#charity Analytics',
             tops: result
