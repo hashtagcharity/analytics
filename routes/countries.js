@@ -1863,14 +1863,6 @@ module.exports = [{
   "region-code": "150",
   "sub-region-code": "154"
 }, {
-  "name": "United Kingdom",
-  "alpha-2": "UK",
-  "alpha-3": "GBR",
-  "country-code": "826",
-  "iso_3166-2": "ISO 3166-2:GB",
-  "region-code": "150",
-  "sub-region-code": "154"
-}, {
   "name": "United States",
   "alpha-2": "US",
   "alpha-3": "USA",

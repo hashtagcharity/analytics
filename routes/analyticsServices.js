@@ -47,13 +47,13 @@ var getTopSkills = function(db, next) {
 var getTopIndustries = function(db, next) {
   db.collection("users").aggregate([{
     $match: {
-      "linkedin.industry": {
+      "linkedin.industryGroup": {
         $exists: true
       }
     }
   }, {
     $group: {
-      _id: "$linkedin.industry",
+      _id: "$linkedin.industryGroup",
       count: {
         $sum: 1
       }
