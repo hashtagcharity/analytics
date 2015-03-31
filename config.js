@@ -1,4 +1,4 @@
-﻿module.exports = {
-    mongoPath: "mongodb://" + process.env.SERVICES_PORT_27017_TCP_ADDR + ":27017/charity",
-    port: 3000
+module.exports = {
+  mongoPath: "mongodb://" + process.env.MONGO_HOST + ":" + process.env.MONGO_PORT + "/" + process.env.MONGO_DB,
+  port: process.env.PORT
 };
