@@ -2,10 +2,11 @@
   var express = require('express');
   var router = express.Router();
   var analyticsServices = require('./analyticsServices');
+  var twopointo = require('./twopointo');
 
   analyticsController.init = function(app) {
     app.get('/', function(req, res) {
-      analyticsServices.getTopUserStatistics(app.db, function(err, result) {
+      analyticsServices.getTopUserStatistics(function(err, result) {
         if (err) {
           res.status(500);
           res.send({
@@ -22,7 +23,22 @@
 
     app.get('/statistics', function(req, res) {
 
-      analyticsServices.getUserStatistics(app.db, req.query.from, req.query.to, function(err, result) {
+      analyticsServices.getUserStatistics(req.query.from, req.query.to, function(err, result) {
+        if (err) {
+          res.status(500);
+          res.send({
+            error: err
+          });
+        } else {
+          res.send(result);
+        }
+      });
+
+    });
+
+    app.get('/statistics2', function(req, res) {
+
+      twopointo.getStatistics(function(err, result) {
         if (err) {
           res.status(500);
           res.send({
@@ -37,7 +53,7 @@
 
     app.get('/countryCodes', function(req, res) {
 
-      analyticsServices.getCountryCodes(app.db, function(err, result) {
+      analyticsServices.getCountryCodes(function(err, result) {
         if (err) {
           res.status(500);
           res.send({

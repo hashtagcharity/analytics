@@ -16,7 +16,11 @@ angular.module('hcChart')
       }
     };
 
-    $scope.data = {};
+    $scope.userData = {};
+
+    $scope.projectData = {};
+
+    $scope.ngoData = {};
 
 
     $scope.search = function() {
@@ -31,13 +35,22 @@ angular.module('hcChart')
       };
       $http(req).
       success(function(data) {
-        $scope.data.data = data;
+        $scope.userData.data = data.users;
+        $scope.projectData.data = data.projects;
+        $scope.ngoData.data = data.ngos;
       });
     };
 
     $http.get('/statistics').
     success(function(data) {
-      $scope.data.data = data;
+      $scope.userData.data = data.users;
+      $scope.projectData.data = data.projects;
+      $scope.ngoData.data = data.ngos;
+    });
+
+    $http.get('/statistics2').
+    success(function(data) {
+      $scope.dailyStats = data;
     });
 
     $http.get('/countryCodes').

@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var async = require('async');
-
 var countries = require('./countries');
+var db = undefined;
 Date.prototype.clearTime = function() {
   this.setHours(0);
   this.setMinutes(0);
@@ -15,7 +15,7 @@ Date.prototype.isValidDate = function isValidDate() {
   return !isNaN(this.getTime());
 };
 
-var getTopSkills = function(db, next) {
+var getTopSkills = function(next) {
   db.collection("users").aggregate([{
     $unwind: "$linkedin.skills"
   }, {
@@ -44,7 +44,7 @@ var getTopSkills = function(db, next) {
     }
   }], next);
 };
-var getTopIndustries = function(db, next) {
+var getTopIndustries = function(next) {
   db.collection("users").aggregate([{
     $match: {
       "linkedin.industryGroup": {
@@ -71,7 +71,7 @@ var getTopIndustries = function(db, next) {
     }
   }], next);
 };
-var getTopCompanies = function(db, next) {
+var getTopCompanies = function(next) {
   db.collection("users").aggregate([{
     $unwind: "$linkedin.positions"
   }, {
@@ -107,7 +107,7 @@ var getTopCompanies = function(db, next) {
     }
   }], next);
 };
-var getTopCountries = function(db, next) {
+var getTopCountries = function(next) {
   db.collection("users").aggregate([{
     $match: {
       "linkedin.countryCode": {
@@ -151,7 +151,7 @@ var getTopCountries = function(db, next) {
     }
   });
 };
-var getTopEducations = function(db, next) {
+var getTopEducations = function(next) {
   db.collection("users").aggregate([{
     $unwind: "$linkedin.educations"
   }, {
@@ -180,145 +180,272 @@ var getTopEducations = function(db, next) {
     }
   }], next);
 };
-var self = module.exports = {
-  getUserStatistics: function(db, rFrom, rTo, next) {
-    var users = db.collection('users');
-    users.aggregate([{
-      $project: {
-        year: {
-          $year: "$registrationDate"
-        },
-        month: {
-          $month: "$registrationDate"
-        },
-        day: {
-          $dayOfMonth: "$registrationDate"
-        },
-        originalDate: "$registrationDate"
-      }
-    }, {
-      $group: {
-        _id: {
-          year: "$year",
-          month: "$month",
-          day: "$day"
-        },
-        date: {
-          $first: '$originalDate'
-        },
-        count: {
-          $sum: 1
-        },
+
+function getUserStats(next) {
+  db.collection('users').aggregate([{
+    $project: {
+      year: {
+        $year: "$registrationDate"
       },
+      month: {
+        $month: "$registrationDate"
+      },
+      day: {
+        $dayOfMonth: "$registrationDate"
+      },
+      originalDate: "$registrationDate"
+    }
+  }, {
+    $group: {
+      _id: {
+        year: "$year",
+        month: "$month",
+        day: "$day"
+      },
+      date: {
+        $first: '$originalDate'
+      },
+      count: {
+        $sum: 1
+      },
+    },
 
-    }, {
-      $project: {
-        _id: 0,
-        date: 1,
-        count: 1
-      }
-    }, {
-      $sort: {
-        date: 1
-      }
-    }], function(err, subResult) {
-      if (err) {
-        next(err);
-      } else {
-        if (subResult.length > 0) {
-          var firstDate = _.first(subResult).date;
-          firstDate.clearTime();
-          var lastDate = _.last(subResult).date;
-          lastDate.clearTime();
+  }, {
+    $project: {
+      _id: 0,
+      date: 1,
+      count: 1
+    }
+  }, {
+    $sort: {
+      date: 1
+    }
+  }], next);
+}
 
-          var timeDiff = Math.abs(lastDate.getTime() - firstDate.getTime());
-          var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+function getProjectStats(next) {
+  db.collection('projects').aggregate([{
+    $match: {
+      status: 'active'
+    }
+  }, {
+    $project: {
+      year: {
+        $year: "$createdOn"
+      },
+      month: {
+        $month: "$createdOn"
+      },
+      day: {
+        $dayOfMonth: "$createdOn"
+      },
+      originalDate: "$createdOn"
+    }
+  }, {
+    $group: {
+      _id: {
+        year: "$year",
+        month: "$month",
+        day: "$day"
+      },
+      date: {
+        $first: '$originalDate'
+      },
+      count: {
+        $sum: 1
+      },
+    },
 
-          var dates = _.map(_.range(diffDays), function(diff) {
-            var newDate = new Date(firstDate);
-            newDate.setDate(firstDate.getDate() + diff);
-            return newDate;
-          });
+  }, {
+    $project: {
+      _id: 0,
+      date: 1,
+      count: 1
+    }
+  }, {
+    $sort: {
+      date: 1
+    }
+  }], next);
+}
 
-          var dbResult = _.map(subResult, function(r) {
-            var tempDate = r.date;
-            tempDate.clearTime();
-            return {
-              x: tempDate,
-              y: [r.count]
-            };
-          });
+function getNgoStats(next) {
+  db.collection('ngos').aggregate([{
+    $match: {
+      status: 'active'
+    }
+  }, {
+    $project: {
+      year: {
+        $year: "$createdOn"
+      },
+      month: {
+        $month: "$createdOn"
+      },
+      day: {
+        $dayOfMonth: "$createdOn"
+      },
+      originalDate: "$createdOn"
+    }
+  }, {
+    $group: {
+      _id: {
+        year: "$year",
+        month: "$month",
+        day: "$day"
+      },
+      date: {
+        $first: '$originalDate'
+      },
+      count: {
+        $sum: 1
+      },
+    },
 
-          _.each(dates, function(date) {
-            var r = _.filter(dbResult, function(dbRes) {
-              return dbRes.x.getTime() == date.getTime();
-            });
-            if (r.length === 0) {
-              dbResult.push({
-                x: date,
-                y: [0]
-              });
-            }
-          });
+  }, {
+    $project: {
+      _id: 0,
+      date: 1,
+      count: 1
+    }
+  }, {
+    $sort: {
+      date: 1
+    }
+  }], next);
+}
 
-          var result = _.sortBy(dbResult, function(r) {
-            return r.x;
-          });
+function transformSeries(rFrom, rTo, series) {
+  if (series.length > 0) {
+    var firstDate = _.first(series).date;
+    firstDate.clearTime();
+    var lastDate = _.last(series).date;
+    lastDate.clearTime();
 
-          _.each(result, function(r) {
-            var earlier = _.filter(result, function(innerResult) {
-              return innerResult.x.getTime() <= r.x.getTime();
-            });
-            var sum = _.reduce(earlier, function(memo, value) {
-              return memo + value.y[0];
-            }, 0);
+    var timeDiff = Math.abs(lastDate.getTime() - firstDate.getTime());
+    var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-            r.y.push(sum);
-          });
+    var dates = _.map(_.range(diffDays), function(diff) {
+      var newDate = new Date(firstDate);
+      newDate.setDate(firstDate.getDate() + diff);
+      return newDate;
+    });
 
-          var from = new Date(Date.parse(rFrom));
-          if (from.isValidDate()) {
-            result = _.filter(result, function(r) {
-              return r.x.getTime() >= from.getTime();
-            });
-          }
-          var to = new Date(Date.parse(rTo));
-          if (to.isValidDate()) {
-            result = _.filter(result, function(r) {
-              return r.x.getTime() <= to.getTime();
-            });
-          }
-          _.each(result, function(r) {
-            var date = r.x;
-            r.x = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-          });
-          next(null, result);
-        } else {
-          next(null, []);
-        }
+    var dbResult = _.map(series, function(r) {
+      var tempDate = r.date;
+      tempDate.clearTime();
+      return {
+        x: tempDate,
+        y: [r.count]
+      };
+    });
+
+    _.each(dates, function(date) {
+      var r = _.filter(dbResult, function(dbRes) {
+        return dbRes.x.getTime() == date.getTime();
+      });
+      if (r.length === 0) {
+        dbResult.push({
+          x: date,
+          y: [0]
+        });
       }
     });
-  },
-  getTopUserStatistics: function(db, next) {
+
+    var result = _.sortBy(dbResult, function(r) {
+      return r.x;
+    });
+
+    _.each(result, function(r) {
+      var earlier = _.filter(result, function(innerResult) {
+        return innerResult.x.getTime() <= r.x.getTime();
+      });
+      var sum = _.reduce(earlier, function(memo, value) {
+        return memo + value.y[0];
+      }, 0);
+
+      r.y.push(sum);
+    });
+
+    var from = new Date(Date.parse(rFrom));
+    if (from.isValidDate()) {
+      result = _.filter(result, function(r) {
+        return r.x.getTime() >= from.getTime();
+      });
+    }
+    var to = new Date(Date.parse(rTo));
+    if (to.isValidDate()) {
+      result = _.filter(result, function(r) {
+        return r.x.getTime() <= to.getTime();
+      });
+    }
+    _.each(result, function(r) {
+      var date = r.x;
+      r.x = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+    });
+    return result;
+  } else {
+    return [];
+  }
+}
+var self = module.exports = {
+  getUserStatistics: function(rFrom, rTo, next) {
+    db = global.db;
     async.parallel({
-      skills: function(callback) {
-        getTopSkills(db, callback);
+      users: function(callback) {
+        getUserStats(function(err, result) {
+          if (err) {
+            callback(err);
+          } else {
+            var transformedResult = transformSeries(rFrom, rTo, result);
+            callback(null, transformedResult);
+          }
+        });
       },
-      industries: function(callback) {
-        getTopIndustries(db, callback);
+      projects: function(callback) {
+        getProjectStats(function(err, result) {
+          if (err) {
+            callback(err);
+          } else {
+            var transformedResult = transformSeries(rFrom, rTo, result);
+            callback(null, transformedResult);
+          }
+        });
       },
-      companies: function(callback) {
-        getTopCompanies(db, callback);
-      },
-      countries: function(callback) {
-        getTopCountries(db, callback);
-      },
-      educations: function(callback) {
-        getTopEducations(db, callback);
+      ngos: function(callback) {
+        getNgoStats(function(err, result) {
+          if (err) {
+            callback(err);
+          } else {
+            var transformedResult = transformSeries(rFrom, rTo, result);
+            callback(null, transformedResult);
+          }
+        });
       }
     }, next);
   },
-  getCountryCodes: function(db, next) {
+  getTopUserStatistics: function(next) {
+    db = global.db;
+    async.parallel({
+      skills: function(callback) {
+        getTopSkills(callback);
+      },
+      industries: function(callback) {
+        getTopIndustries(callback);
+      },
+      companies: function(callback) {
+        getTopCompanies(callback);
+      },
+      countries: function(callback) {
+        getTopCountries(callback);
+      },
+      educations: function(callback) {
+        getTopEducations(callback);
+      }
+    }, next);
+  },
+  getCountryCodes: function(next) {
+    db = global.db;
     db.collection("users").distinct("linkedin.countryCode", next);
   }
 };

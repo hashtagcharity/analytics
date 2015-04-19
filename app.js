@@ -61,6 +61,7 @@ MongoClient.connect(config.mongoPath, function(err, db) {
   if (err) throw err;
   console.log("Connected to mongodb on " + config.mongoPath);
   app.db = db;
+  global.db = db;
   app.listen(config.port);
   console.log("Analytics running on port " + config.port);
 });
