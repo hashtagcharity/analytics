@@ -4,6 +4,36 @@ block content
   div(ng-app="hcChart",ng-controller="ChartCtrl")
     .container-fluid
       .row
+        h2 Stats
+        .table-responsive.col-md-4
+            table.table
+              tr
+                td Number of users
+                td {{dailyStats.numberOfUsers}}
+              tr
+                td Number of projects
+                td {{dailyStats.numberOfProjects}}
+              tr
+                td Number of NGOs
+                td {{dailyStats.numberOfNgos}}
+              tr
+                td Number of projects with at least one member
+                td {{dailyStats.numberOfProjWithMinOneMember}}
+                td {{dailyStats.numberOfProjWithMinOneMember*100/dailyStats.numberOfProjects}}%
+              tr
+                td Number of projects with at least two uploaded file
+                td {{dailyStats.numberOfProjWithMinOneFile}}
+                td {{dailyStats.numberOfProjWithMinOneFile*100/dailyStats.numberOfProjects}}%
+              tr
+                td Number of projects with at least three tasks
+                td {{dailyStats.numberOfProjWithMinThreeTask}}
+                td {{dailyStats.numberOfProjWithMinThreeTask*100/dailyStats.numberOfProjects}}%
+              tr
+                td Number of projects with at least five chat messages
+                td {{dailyStats.numberOfProjWithMinFiveChatMessage}}
+                td {{dailyStats.numberOfProjWithMinFiveChatMessage*100/dailyStats.numberOfProjects}}%
+    .container-fluid
+      .row
         div(class="row")
             div(class="col-md-4")
                 input(type="text", class="form-control",datepicker, ng-model="from",placeholder="From...")
@@ -20,31 +50,6 @@ block content
         div(class="row")
           h2 NGO
           div(data-ac-chart="'bar'"  data-ac-data="ngoData" data-ac-config="config"  class="chart",style="width:100%;height:700px")
-    .container-fluid
-      .row
-        .table-responsive.col-md-4
-            table.table
-              tr
-                td Number of users
-                td {{dailyStats.numberOfUsers}}
-              tr
-                td Number of projects
-                td {{dailyStats.numberOfProjects}}
-              tr
-                td Number of NGOs
-                td {{dailyStats.numberOfNgos}}
-              tr
-                td Number of projects with at least one member
-                td {{dailyStats.numberOfProjWithMinOneMember}}
-              tr
-                td Number of projects with at least one uploaded file
-                td {{dailyStats.numberOfProjWithMinOneFile}}
-              tr
-                td Number of projects with at least three tasks
-                td {{dailyStats.numberOfProjWithMinThreeTask}}
-              tr
-                td Number of projects with at least five chat messages
-                td {{dailyStats.numberOfProjWithMinFiveChatMessage}}
   .container-fluid
     .row
       .col-md-2

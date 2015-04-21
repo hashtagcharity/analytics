@@ -100,7 +100,7 @@ module.exports = {
         getNumOfProjWithMinOneMember(1, callback);
       },
       numberOfProjWithMinOneFile: function(callback) {
-        getNumOfProjWithMinFiles(1, callback);
+        getNumOfProjWithMinFiles(2, callback);
       },
       numberOfProjWithMinThreeTask: function(callback) {
         getNumOfProjWithMinThreeTask(3, callback);
