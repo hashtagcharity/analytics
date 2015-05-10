@@ -109,5 +109,9 @@ module.exports = {
         getNumOfProjWithMinFiveChatMessage(5, callback);
       }
     }, next);
+  },
+  calculateTopProjects: function(numberOfProjects, next) {
+    db = global.db;
+    getTopProjects(numberOfProjects, next);
   }
 };

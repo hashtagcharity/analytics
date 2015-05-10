@@ -51,6 +51,23 @@
 
     });
 
+    app.get('/topmatches', function(req, res) {
+
+      twopointo.calculateTopProjects(1, function(err, result) {
+        if (err) {
+          res.status(500);
+          res.send({
+            error: err
+          });
+        } else {
+
+          console.log(result);
+          res.send(result);
+        }
+      });
+
+    });
+
     app.get('/countryCodes', function(req, res) {
 
       analyticsServices.getCountryCodes(function(err, result) {
