@@ -126,7 +126,11 @@ module.exports = {
         if (err) {
           next(err);
         } else {
-          models.User.find({}, function(err, users) {
+          models.User.find({
+            "linkedin.email": {
+              "$exists": true
+            }
+          }, function(err, users) {
             if (err) {
               next(err);
             } else {
@@ -147,7 +151,9 @@ module.exports = {
                         joined.push({
                           user: {
                             id: user.shortId,
-                            name: user.name
+                            name: user.name,
+                            email: user.linkedin.email,
+                            firstName: user.linkedin.firstName
                           },
                           project: {
                             shortName: project.shortName,

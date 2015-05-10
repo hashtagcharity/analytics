@@ -1,6 +1,39 @@
 var config = global.config;
 var mandrill = require('mandrill-api/mandrill');
 var mandrill_client = new mandrill.Mandrill(config.mandrill.apiKey);
+var _ = require('lodash');
+
+function extractRecipients(recipientsWithModel) {
+  var transformedTo = _.map(recipientsWithModel, function(r) {
+    return {
+      email: r.to
+    };
+  });
+  return transformedTo;
+}
+
+function transformModelToMergeVars(model) {
+  var mergeVars = [];
+  for (var key in model) {
+    if (model.hasOwnProperty(key)) {
+      mergeVars.push({
+        name: key,
+        content: model[key]
+      });
+    }
+  }
+  return mergeVars;
+}
+
+function transformPayload(recipientsWithModel) {
+  var mergeVars = _.map(recipientsWithModel, function(r) {
+    return {
+      rcpt: r.to,
+      vars: transformModelToMergeVars(r.model)
+    };
+  });
+  return mergeVars;
+}
 
 module.exports = {
   ping: function(next) {
@@ -8,38 +41,13 @@ module.exports = {
       console.log('Reputation: ' + info.reputation + ', Hourly Quota: ' + info.hourly_quota);
     });
   },
-  sendCustomMail: function(message, next) {
-    mandrill_client.messages.send({
-      message: message,
-      async: true
-    }, function(result) {
-      next(null, result);
-    }, function(err) {
-      next(err);
-    });
-  },
-  sendExampleMail: function(next) {
+  sendTemplatedMail: function(templateName, recipientsWithModel, next) {
     var message = {
-      "html": "<p>Example HTML content</p>",
-      "text": "Example text content",
-      "subject": "Helló world",
-      "from_email": "balazs.mate@hashtagcharity.org",
-      "from_name": "Balázs Máté",
-      "to": [{
-        "email": "balazs.mate@hashtagcharity.org",
-        "name": "Balázs Máté",
-        "type": "to"
-      }],
-      "global_merge_vars": [{
-        "name": "notificationTitle",
-        "content": "hello world"
-      }, {
-        "name": "text",
-        "content": "műxik"
-      }]
+      to: extractRecipients(recipientsWithModel),
+      merge_vars: transformPayload(recipientsWithModel),
     };
     mandrill_client.messages.sendTemplate({
-      template_name: "subscriptiontemplate",
+      template_name: templateName,
       template_content: [],
       message: message,
       async: true
@@ -48,8 +56,5 @@ module.exports = {
     }, function(err) {
       next(err);
     });
-  },
-  sendTemplatedMail: function(next) {
-
   }
 };

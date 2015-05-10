@@ -6,6 +6,10 @@ block content
       .row
         h2 SmartMatches
         a(href='/admin/topsmartmatches' target='_blank') Get Top SmartMatches
-
+        form(action="/admin/topsmartmatches" method="POST" enctype="multipart/form-data")
+          input(type='file' name='matches')
+          input(type='submit' val='Upload')
+        p
+          #{message}
 block scripts
 
