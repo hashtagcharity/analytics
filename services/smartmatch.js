@@ -148,24 +148,32 @@ module.exports = {
                       });
                       if (pIndex !== -1) {
                         var project = projects[pIndex];
-                        joined.push({
-                          user: {
-                            id: user.shortId,
-                            name: user.name,
-                            email: user.linkedin.email,
-                            firstName: user.linkedin.firstName
-                          },
-                          project: {
-                            shortName: project.shortName,
-                            title: project.title,
-                            openPositions: project.team.maxMembers - project.team.members.length,
-                            takenPositions: project.team.members.length
-                          },
-                          sm: {
-                            impact: m.impact,
-                            impactNumber: m.impactNumber
-                          }
+                        var alreadyMember = _.some(project.team.members, function(m) {
+                          return m.shortId == user.shortId;
                         });
+                        var alreadyOnWaitlist = _.some(project.team.waitlist, function(m) {
+                          return m.shortId == user.shortId;
+                        });
+                        if (!alreadyMember && !alreadyOnWaitlist) {
+                          joined.push({
+                            user: {
+                              id: user.shortId,
+                              name: user.name,
+                              email: user.linkedin.email,
+                              firstName: user.linkedin.firstName
+                            },
+                            project: {
+                              shortName: project.shortName,
+                              title: project.title,
+                              openPositions: project.team.maxMembers - project.team.members.length,
+                              takenPositions: project.team.members.length
+                            },
+                            sm: {
+                              impact: m.impact,
+                              impactNumber: m.impactNumber
+                            }
+                          });
+                        }
                       }
                     });
                     var sorted = _.sortBy(joined, function(r) {

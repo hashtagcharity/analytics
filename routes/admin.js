@@ -125,7 +125,7 @@
               mandrill.sendTemplatedMail('matchforimpact', payload, function(err, result) {
                 res.render('admin', {
                   title: '#charity Admin',
-                  message: 'SmartMatch email sending successful'
+                  result: result
                 });
 
               });
