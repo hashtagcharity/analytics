@@ -23,17 +23,35 @@ module.exports = {
           },
           status: 'active',
           '$where': 'this.team.members.length==0'
-        }, 'title shortName', function(err, result) {
+        }, 'title shortName owner', function(err, result) {
           if (err) {
             next(err);
           } else {
-            var mappedResult = _.map(result, function(r) {
-              return {
-                title: r.title,
-                shortName: r.shortName
-              };
+            var ownerIds = _.map(result, function(r) {
+              return r.owner.shortId;
             });
-            next(null, mappedResult);
+            models.User.find({
+              'shortId': {
+                '$in': ownerIds
+              }
+            }, 'shortId linkedin.firstName linkedin.lastName linkedin.email', function(err, owners) {
+              var mappedResult = _.map(result, function(r) {
+                var row = {
+                  title: r.title,
+                  shortName: r.shortName
+                };
+                var ownerIndex = _.findIndex(owners, function(o) {
+                  return o.shortId === r.owner.shortId;
+                });
+                if (ownerIndex !== -1) {
+                  var owner = owners[ownerIndex];
+                  row.ownerName = owner.name;
+                  row.ownerEmail = owner.linkedin.email;
+                }
+                return row;
+              });
+              next(null, mappedResult);
+            });
           }
         });
       }
