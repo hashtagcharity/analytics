@@ -51,6 +51,22 @@
       });
     });
 
+    app.get('/admin/projectwithoutmember', function(req, res) {
+      var adminServices = require('../services/adminServices');
+      adminServices.getOlderProjectsWithoutMembers(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['title', 'shortName']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=olderprojectwithoutmembers.csv');
+          res.csv(result);
+        }
+      });
+    });
+
     function processFile(req, next) {
       var source = fs.createReadStream(req.files.matches.path);
       var lines = [];
