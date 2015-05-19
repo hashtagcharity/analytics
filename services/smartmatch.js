@@ -178,7 +178,7 @@ module.exports = {
                     });
                     var sorted = _.sortBy(joined, function(r) {
                       return r.sm.impactNumber;
-                    }).reverse().slice(0, numberOfProjects);
+                    }).reverse().slice(1, numberOfProjects + 1);
                     next(null, sorted);
                   }
                 });
