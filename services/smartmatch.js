@@ -176,9 +176,15 @@ module.exports = {
                         }
                       }
                     });
-                    var sorted = _.sortBy(joined, function(r) {
+                    var fullSorted = _.sortBy(joined, function(r) {
                       return r.sm.impactNumber;
-                    }).reverse().slice(1, numberOfProjects + 1);
+                    }).reverse();
+                    var sorted = undefined;
+                    if (fullSorted.length > 1) {
+                      sorted = fullSorted.slice(1, numberOfProjects + 1);
+                    } else {
+                      sorted = fullSorted.slice(0, numberOfProjects);
+                    }
                     next(null, sorted);
                   }
                 });
