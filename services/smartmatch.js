@@ -117,7 +117,7 @@ module.exports = {
       });
     });
   },
-  calculateTopProjects: function(numberOfProjects, next) {
+  calculateTopProjects: function(indexOfProject, next) {
     models.Project.find({
         status: 'active',
         "$where": "this.team.maxMembers - this.team.members.length>0"
@@ -179,11 +179,11 @@ module.exports = {
                     var fullSorted = _.sortBy(joined, function(r) {
                       return r.sm.impactNumber;
                     }).reverse();
-                    var sorted = undefined;
-                    if (fullSorted.length > 1) {
-                      sorted = fullSorted.slice(1, numberOfProjects + 1);
+                    var sorted = null;
+                    if (fullSorted.length > (indexOfProject - 1)) {
+                      sorted = fullSorted.slice((indexOfProject - 1), indexOfProject);
                     } else {
-                      sorted = fullSorted.slice(0, numberOfProjects);
+                      sorted = fullSorted.slice(0, 1);
                     }
                     next(null, sorted);
                   }
