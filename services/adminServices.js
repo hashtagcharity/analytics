@@ -2,7 +2,43 @@ var models = global.models,
   async = require('async'),
   _ = require('lodash');
 
+function getNgosWithProjects(next) {
+  models.Project.distinct('ngo.shortName', {
+    status: {
+      $in: ['active', 'closed']
+    }
+  }, next);
+}
+
 module.exports = {
+
+  getNgosWithoutProjects: function(next) {
+    getNgosWithProjects(function(err, ngoShortNames) {
+      if (err) {
+        next(err);
+      } else {
+        models.Ngo.find({
+          shortName: {
+            $not: {
+              $in: ngoShortNames
+            }
+          }
+        }, function(err, ngos) {
+          if (err) {
+            next(err);
+          } else {
+            var result = _.map(ngos, function(temp) {
+              return {
+                name: temp.name,
+                shortName: temp.shortName
+              };
+            });
+            next(null, result);
+          }
+        });
+      }
+    });
+  },
   getOlderProjectsWithoutMembers: function(next) {
     var d = new Date();
     d.setMonth(d.getMonth() - 1);

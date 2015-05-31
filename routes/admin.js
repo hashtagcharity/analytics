@@ -67,6 +67,21 @@
       });
     });
 
+    app.get('/admin/ngoswithoutprojects', function(req, res) {
+      var adminServices = require('../services/adminServices');
+      adminServices.getNgosWithoutProjects(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=ngoswithoutprojects.csv');
+          res.csv(result);
+        }
+      });
+    });
+
     function processFile(req, next) {
       var source = fs.createReadStream(req.files.matches.path);
       var lines = [];
