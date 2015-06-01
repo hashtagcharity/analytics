@@ -10,6 +10,26 @@ function getNgosWithProjects(next) {
   }, next);
 }
 
+function getProjectsByNgos(shortNames, next) {
+  models.Project.aggregate([{
+    $match: {
+      'ngo.shortName': {
+        $in: shortNames
+      },
+      status: {
+        $in: ['draft', 'pending']
+      }
+    }
+  }, {
+    $group: {
+      _id: '$ngo.shortName',
+      projects: {
+        $addToSet: '$title'
+      }
+    }
+  }], next);
+}
+
 module.exports = {
 
   getNgosWithoutProjects: function(next) {
@@ -27,13 +47,50 @@ module.exports = {
           if (err) {
             next(err);
           } else {
-            var result = _.map(ngos, function(temp) {
-              return {
-                name: temp.name,
-                shortName: temp.shortName
-              };
+            var adminsIds = _.map(ngos, function(n) {
+              return n.admin.shortId;
             });
-            next(null, result);
+            models.User.find({
+              shortId: {
+                $in: adminsIds
+              }
+            }, function(err, users) {
+
+              if (err) {
+                next(err);
+              } else {
+                getProjectsByNgos(_.map(ngos, 'shortName'), function(err, projects) {
+                  console.log(projects);
+                  if (err) {
+                    next(err);
+                  } else {
+                    var result = _.map(ngos, function(temp) {
+                      var row = {
+                        name: temp.name,
+                        shortName: temp.shortName,
+                        status: temp.status,
+                      };
+                      var userIndex = _.findIndex(users, function(u) {
+                        return u.shortId === temp.admin.shortId;
+                      });
+                      if (userIndex !== -1) {
+                        row.adminName = users[userIndex].name;
+                        row.adminEmail = users[userIndex].linkedin.email;
+                      }
+                      var projectsIndex = _.findIndex(projects, function(p) {
+                        return p._id == temp.shortName;
+                      });
+                      if (projectsIndex !== -1) {
+                        row.projects = projects[projectsIndex].projects.join('|');
+                      }
+                      return row;
+                    });
+
+                    next(null, result);
+                  }
+                });
+              }
+            });
           }
         });
       }

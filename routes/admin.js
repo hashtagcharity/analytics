@@ -75,6 +75,7 @@
             error: err
           });
         } else {
+          result.unshift(['NgoName', 'NgoShortname', 'NgoStatus', 'Ngo Admin Name', 'Ngo Admin Email', 'projects']);
           res.set('Content-Type', 'text/csv');
           res.setHeader('Content-disposition', 'attachment; filename=ngoswithoutprojects.csv');
           res.csv(result);
