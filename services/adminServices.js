@@ -24,7 +24,11 @@ function getProjectsByNgos(shortNames, next) {
     $group: {
       _id: '$ngo.shortName',
       projects: {
-        $addToSet: '$title'
+        $addToSet: {
+          title: '$title',
+          shortName: '$shortName',
+          status: '$status'
+        }
       }
     }
   }], next);
@@ -60,7 +64,6 @@ module.exports = {
                 next(err);
               } else {
                 getProjectsByNgos(_.map(ngos, 'shortName'), function(err, projects) {
-                  console.log(projects);
                   if (err) {
                     next(err);
                   } else {
@@ -81,7 +84,10 @@ module.exports = {
                         return p._id == temp.shortName;
                       });
                       if (projectsIndex !== -1) {
-                        row.projects = projects[projectsIndex].projects.join('|');
+                        var projs = _.map(projects[projectsIndex].projects, function(p) {
+                          return '(t: ' + p.title + '; n: ' + p.shortName + '; s: ' + p.status + ')';
+                        });
+                        row.projects = projs.join('|');
                       }
                       return row;
                     });
