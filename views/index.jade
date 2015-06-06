@@ -14,9 +14,6 @@ block content
                 td Number of projects
                 td {{dailyStats.numberOfProjects}}
               tr
-                td Number of NGOs
-                td {{dailyStats.numberOfNgos}}
-              tr
                 td Number of projects with at least one member
                 td {{dailyStats.numberOfProjWithMinOneMember}}
                 td {{dailyStats.numberOfProjWithMinOneMember*100/dailyStats.numberOfProjects}}%
@@ -32,6 +29,26 @@ block content
                 td Number of projects with at least five chat messages
                 td {{dailyStats.numberOfProjWithMinFiveChatMessage}}
                 td {{dailyStats.numberOfProjWithMinFiveChatMessage*100/dailyStats.numberOfProjects}}%
+                .row
+        h2 NGO Stats
+        .table-responsive.col-md-4
+            table.table
+              tr
+                td Pending NGOs
+                td {{dailyStats.numberOfNgosByStatus.pending}}
+                td {{dailyStats.numberOfNgosByStatus.pendingPerc}}%
+              tr
+                td Draft NGOs
+                td {{dailyStats.numberOfNgosByStatus.draft}}
+                td {{dailyStats.numberOfNgosByStatus.draftPerc}}%
+              tr
+                td Approved NGOs
+                td {{dailyStats.numberOfNgosByStatus.active}}
+                td {{dailyStats.numberOfNgosByStatus.activePerc}}%
+              tr
+                td NGOs with projects
+                td {{dailyStats.numberOfNgosByStatus.withProjects}}
+                td {{dailyStats.numberOfNgosByStatus.withProjectsPerc}}%
     .container-fluid
       .row
         div(class="row")

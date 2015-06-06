@@ -1,15 +1,53 @@
 var _ = require('lodash');
 var async = require('async');
 var db = undefined;
+var models = global.models;
 
 function getNumberOfUsers(next) {
   db.collection("users").count(next);
 }
 
-function getNumberOfNgos(next) {
-  db.collection("ngos").count({
-    status: 'active'
+function getNgosWithProjects(next) {
+  models.Project.distinct('ngo.shortName', {
+    status: {
+      $in: ['active', 'closed']
+    }
   }, next);
+}
+
+function getNumberOfNgosByStatus(next) {
+  models.Ngo.aggregate([{
+    $group: {
+      _id: '$status',
+      count: {
+        $sum: 1
+      }
+    }
+  }], function(err, ngoStats) {
+    if (err) {
+      next(err);
+    } else {
+      getNgosWithProjects(function(err, ngosWithProjects) {
+        if (err) {
+          next(err);
+        } else {
+          var result = {};
+          for (var i = ngoStats.length - 1; i >= 0; i--) {
+            result[ngoStats[i]._id] = ngoStats[i].count;
+          }
+          var allNgos = result.pending + result.draft + result.active;
+          result.pendingPerc = parseInt(result.pending * 100 / allNgos);
+          result.draftPerc = parseInt(result.draft * 100 / allNgos);
+          result.activePerc = parseInt(result.active * 100 / allNgos);
+          result.withProjects = ngosWithProjects.length;
+          result.withProjectsPerc = parseInt(result.withProjects * 100 / result.active);
+          result.withoutProjects = result.active - ngosWithProjects.length;
+
+          next(null, result);
+        }
+      });
+    }
+  });
 }
 
 function getNumberOfProjects(next) {
@@ -45,41 +83,6 @@ function getNumOfProjWithMinThreeTask(numberOfTasks, next) {
   }, next);
 }
 
-function getNumOfProjWithMinFiveChatMessage(numberOfMessage, next) {
-  db.collection('projectchatmessages').aggregate([{
-    $group: {
-      _id: "$projectShortName",
-      count: {
-        $sum: 1
-      }
-    }
-  }, {
-    $match: {
-      count: {
-        $gt: numberOfMessage
-      }
-    }
-  }, {
-    $group: {
-      _id: "$fake",
-      count: {
-        $sum: 1
-      }
-    }
-  }], function(err, res) {
-    console.log('itt');
-    if (err) {
-      next(err);
-    } else {
-      if (res && res.length > 0) {
-        next(null, res[0].count);
-      } else {
-        next(null, 0);
-      }
-    }
-  });
-}
-
 module.exports = {
   getStatistics: function(next) {
     db = global.db;
@@ -90,8 +93,8 @@ module.exports = {
       numberOfUsers: function(callback) {
         getNumberOfUsers(callback);
       },
-      numberOfNgos: function(callback) {
-        getNumberOfNgos(callback);
+      numberOfNgosByStatus: function(callback) {
+        getNumberOfNgosByStatus(callback);
       },
       numberOfProjects: function(callback) {
         getNumberOfProjects(callback);
@@ -104,9 +107,6 @@ module.exports = {
       },
       numberOfProjWithMinThreeTask: function(callback) {
         getNumOfProjWithMinThreeTask(3, callback);
-      },
-      numberOfProjWithMinFiveChatMessage: function(callback) {
-        getNumOfProjWithMinFiveChatMessage(5, callback);
       }
     }, next);
   },
