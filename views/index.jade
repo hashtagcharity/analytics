@@ -4,51 +4,52 @@ block content
   div(ng-app="hcChart",ng-controller="ChartCtrl")
     .container-fluid
       .row
-        h2 Stats
-        .table-responsive.col-md-4
-            table.table
-              tr
-                td Number of users
-                td {{dailyStats.numberOfUsers}}
-              tr
-                td Number of projects
-                td {{dailyStats.numberOfProjects}}
-              tr
-                td Number of projects with at least one member
-                td {{dailyStats.numberOfProjWithMinOneMember}}
-                td {{dailyStats.numberOfProjWithMinOneMember*100/dailyStats.numberOfProjects}}%
-              tr
-                td Number of projects with at least two uploaded file
-                td {{dailyStats.numberOfProjWithMinOneFile}}
-                td {{dailyStats.numberOfProjWithMinOneFile*100/dailyStats.numberOfProjects}}%
-              tr
-                td Number of projects with at least three tasks
-                td {{dailyStats.numberOfProjWithMinThreeTask}}
-                td {{dailyStats.numberOfProjWithMinThreeTask*100/dailyStats.numberOfProjects}}%
-              tr
-                td Number of projects with at least five chat messages
-                td {{dailyStats.numberOfProjWithMinFiveChatMessage}}
-                td {{dailyStats.numberOfProjWithMinFiveChatMessage*100/dailyStats.numberOfProjects}}%
-                .row
-        h2 NGO Stats
-        .table-responsive.col-md-4
+        .col-md-3
+          h2 General Stats
+          .table-responsive
+              table.table
+                tr
+                  td Number of users
+                  td {{dailyStats.numberOfUsers}}
+                tr
+                  td Number of projects
+                  td {{dailyStats.numberOfProjects}}
+                tr
+                  td Number of well managed
+                  td {{dailyStats.numberOfWellManagedProjects}}
+        .col-md-3
+          h2 NGO Stats
+          .table-responsive
             table.table
               tr
                 td Pending NGOs
-                td {{dailyStats.numberOfNgosByStatus.pending}}
-                td {{dailyStats.numberOfNgosByStatus.pendingPerc}}%
+                td {{dailyStats.ngoStats.pending}}
+                td {{dailyStats.ngoStats.pendingPerc}}%
               tr
                 td Draft NGOs
-                td {{dailyStats.numberOfNgosByStatus.draft}}
-                td {{dailyStats.numberOfNgosByStatus.draftPerc}}%
+                td {{dailyStats.ngoStats.draft}}
+                td {{dailyStats.ngoStats.draftPerc}}%
               tr
                 td Approved NGOs
-                td {{dailyStats.numberOfNgosByStatus.active}}
-                td {{dailyStats.numberOfNgosByStatus.activePerc}}%
+                td {{dailyStats.ngoStats.active}}
+                td {{dailyStats.ngoStats.activePerc}}%
               tr
                 td NGOs with projects
-                td {{dailyStats.numberOfNgosByStatus.withProjects}}
-                td {{dailyStats.numberOfNgosByStatus.withProjectsPerc}}%
+                td {{dailyStats.ngoStats.withProjects}}
+                td {{dailyStats.ngoStats.withProjectsPerc}}%
+        .col-md-3
+          h2 Volunteering Stats
+          .table-responsive
+            table.table
+              tr
+                td Open Positions
+                td {{dailyStats.volStats.openPositions}}
+              tr
+                td Pending Positions
+                td {{dailyStats.volStats.pendingPositions}}
+              tr
+                td Taken Positions
+                td {{dailyStats.volStats.takenPositions}}
     .container-fluid
       .row
         div(class="row")

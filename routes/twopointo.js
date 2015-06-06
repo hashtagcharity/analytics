@@ -74,13 +74,125 @@ function getNumOfProjWithMinFiles(numberOfFiles, next) {
   }, next);
 }
 
-function getNumOfProjWithMinThreeTask(numberOfTasks, next) {
-  db.collection("projects").count({
+function getNumOfWellManagedProjects(next) {
+  models.Project.count({
     "tasks.todo": {
       $exists: true
     },
-    $where: 'this.tasks.todo.length+this.tasks.done.length+this.tasks.doing.length>=' + numberOfTasks
+    $where: 'this.tasks.todo.length+this.tasks.done.length+this.tasks.doing.length>=3 && this.fileStore.files.length>=1',
+    repoUrl: {
+      $exists: true
+    }
   }, next);
+}
+
+function getNumberOfOpenPositions(next) {
+  models.Project.aggregate([{
+    $match: {
+      status: 'active'
+    }
+  }, {
+    $project: {
+      openPositions: {
+        $subtract: ["$team.maxMembers", {
+          $size: "$team.members"
+        }]
+      }
+    }
+  }, {
+    $group: {
+      _id: null,
+      sum: {
+        $sum: "$openPositions"
+      }
+    }
+  }], function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      if (result && result.length > 0) {
+        next(null, result[0].sum);
+      } else {
+        next(null, 0);
+      }
+    }
+  });
+}
+
+function getNumberOfTakenPositions(next) {
+  models.Project.aggregate([{
+    $match: {
+      status: 'active'
+    }
+  }, {
+    $project: {
+      takenPositions: {
+        $size: "$team.members"
+      }
+    }
+  }, {
+    $group: {
+      _id: null,
+      sum: {
+        $sum: "$takenPositions"
+      }
+    }
+  }], function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      if (result && result.length > 0) {
+        next(null, result[0].sum);
+      } else {
+        next(null, 0);
+      }
+    }
+  });
+}
+
+function getNumberOfPendingPositions(next) {
+  models.Project.aggregate([{
+    $match: {
+      status: 'active'
+    }
+  }, {
+    $project: {
+      takenPositions: {
+        $size: "$team.waitlist"
+      }
+    }
+  }, {
+    $group: {
+      _id: null,
+      sum: {
+        $sum: "$takenPositions"
+      }
+    }
+  }], function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      if (result && result.length > 0) {
+        next(null, result[0].sum);
+      } else {
+        next(null, 0);
+      }
+    }
+  });
+}
+
+function getProjectsByStatusAndType(next) {
+  models.Project.aggregate([{
+    $group: {
+      _id: {
+        status: '$status',
+        type: '$type'
+      },
+      count: {
+        $sum: 1
+      }
+    }
+  }], next);
 }
 
 module.exports = {
@@ -93,20 +205,27 @@ module.exports = {
       numberOfUsers: function(callback) {
         getNumberOfUsers(callback);
       },
-      numberOfNgosByStatus: function(callback) {
+      ngoStats: function(callback) {
         getNumberOfNgosByStatus(callback);
+      },
+      volStats: function(callback) {
+        async.parallel({
+          takenPositions: function(cb) {
+            getNumberOfTakenPositions(cb);
+          },
+          openPositions: function(cb) {
+            getNumberOfOpenPositions(cb);
+          },
+          pendingPositions: function(cb) {
+            getNumberOfPendingPositions(cb);
+          }
+        }, callback);
       },
       numberOfProjects: function(callback) {
         getNumberOfProjects(callback);
       },
-      numberOfProjWithMinOneMember: function(callback) {
-        getNumOfProjWithMinOneMember(1, callback);
-      },
-      numberOfProjWithMinOneFile: function(callback) {
-        getNumOfProjWithMinFiles(2, callback);
-      },
-      numberOfProjWithMinThreeTask: function(callback) {
-        getNumOfProjWithMinThreeTask(3, callback);
+      numberOfWellManagedProjects: function(callback) {
+        getNumOfWellManagedProjects(callback);
       }
     }, next);
   },
