@@ -106,6 +106,12 @@ function getNumberOfProjects(next) {
   models.Project.count(next);
 }
 
+function getNumberOfActiveProjects(next) {
+  models.Project.count({
+    status: 'active'
+  }, next);
+}
+
 function getNumberOfNgos(next) {
   models.Ngo.count(next);
 }
@@ -514,6 +520,9 @@ module.exports = {
         getNumberOfCountries(callback);
       },
       numberOfProjects: function(callback) {
+        getNumberOfActiveProjects(callback);
+      },
+      numberOfAllProjects: function(callback) {
         getNumberOfProjects(callback);
       },
       numberOfNgos: function(callback) {
