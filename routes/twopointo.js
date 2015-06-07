@@ -391,6 +391,47 @@ function getProjectsByStatusAndType(next) {
   }], next);
 }
 
+function getNumberOfCompanies(next) {
+  models.User.aggregate([{
+    $unwind: "$linkedin.positions"
+  }, {
+    $group: {
+      _id: "$shortId",
+      company: {
+        $first: "$linkedin.positions"
+      }
+    }
+  }, {
+    $match: {
+      "company.companyName": {
+        $exists: true
+      }
+    }
+  }, {
+    $group: {
+      _id: "$company.companyName",
+      count: {
+        $sum: 1
+      }
+    }
+  }, {
+    $sort: {
+      count: -1
+    }
+  }, {
+    $project: {
+      name: "$_id",
+      count: "$count"
+    }
+  }], function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      next(null, result.length);
+    }
+  });
+}
+
 module.exports = {
   getStatistics: function(next) {
     db = global.db;
@@ -400,6 +441,9 @@ module.exports = {
       },
       numberOfUsers: function(callback) {
         getNumberOfUsers(callback);
+      },
+      numberOfCompanies: function(callback) {
+        getNumberOfCompanies(callback);
       },
       ngoStats: function(callback) {
         getNumberOfNgosByStatus(callback);
