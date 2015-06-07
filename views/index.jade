@@ -4,28 +4,13 @@ block content
   div(ng-app="hcChart",ng-controller="ChartCtrl")
     .container-fluid
       .row
-        .col-md-3
+        .col-md-2
           h2 General Stats
           .table-responsive
               table.table
                 tr
                   td Number of users
                   td {{dailyStats.numberOfUsers}}
-                tr
-                  td Number of projects
-                  td {{dailyStats.numberOfProjects}}
-                tr
-                  td Number of general projects
-                  td {{dailyStats.projectsByType.general}}
-                  td {{dailyStats.projectsByType.general*100/dailyStats.numberOfProjects|number:0}}%
-                tr
-                  td Number of idea projects
-                  td {{dailyStats.projectsByType.idea}}
-                  td {{dailyStats.projectsByType.idea*100/dailyStats.numberOfProjects|number:0}}%
-                tr
-                  td Number of perfectly managed
-                  td {{dailyStats.numberOfWellManagedProjects}}
-                  td {{dailyStats.numberOfWellManagedProjects*100/dailyStats.numberOfProjects|number:0}}%
                 tr
                   td Number of countries
                   td {{dailyStats.numberOfCountries}}
@@ -35,26 +20,37 @@ block content
                 tr
                   td Number of likes
                   td {{dailyStats.numberOfLikes}}
-        .col-md-2
+        .col-md-3
           h2 Project Stats
           .table-responsive
             table.table
               tr
-                td Pending Projects
-                td {{dailyStats.projectStats.pending}}
-                td {{dailyStats.projectStats.pendingPerc}}%
+                td Number of projects
+                td {{dailyStats.numberOfProjects}}
               tr
                 td Draft Projects
                 td {{dailyStats.projectStats.draft}}
                 td {{dailyStats.projectStats.draftPerc}}%
               tr
+                td Pending Projects
+                td {{dailyStats.projectStats.pending}}
+                td {{dailyStats.projectStats.pendingPerc}}%
+              tr
                 td Approved Projects
                 td {{dailyStats.projectStats.active}}
                 td {{dailyStats.projectStats.activePerc}}%
               tr
-                td Closed Projects
-                td {{dailyStats.projectStats.closed}}
-                td {{dailyStats.projectStats.closedPerc}}%
+                td Number of general projects
+                td {{dailyStats.projectsByType.general}}
+                td {{dailyStats.projectsByType.general*100/dailyStats.numberOfProjects|number:0}}%
+              tr
+                td Number of idea projects
+                td {{dailyStats.projectsByType.idea}}
+                td {{dailyStats.projectsByType.idea*100/dailyStats.numberOfProjects|number:0}}%
+              tr
+                td Number of perfectly managed
+                td {{dailyStats.numberOfWellManagedProjects}}
+                td {{dailyStats.numberOfWellManagedProjects*100/dailyStats.numberOfProjects|number:0}}%
               tr
                 td Without Links
                 td {{dailyStats.projMissingStats.withoutLinks}}
@@ -79,10 +75,17 @@ block content
                 td Without ToDos
                 td {{dailyStats.projMissingStats.withoutTodos}}
                 td {{dailyStats.projMissingStats.withoutTodos*100/dailyStats.numberOfProjects|number:0}}%
+              tr
+                td Closed Projects
+                td {{dailyStats.projectStats.closed}}
+                td {{dailyStats.projectStats.closedPerc}}%
         .col-md-2
           h2 NGO Stats
           .table-responsive
             table.table
+              tr
+                td Number of projects
+                td {{dailyStats.numberOfNgos}}
               tr
                 td Pending NGOs
                 td {{dailyStats.ngoStats.pending}}

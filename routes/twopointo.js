@@ -103,9 +103,11 @@ function getNumberOfProjectsByType(next) {
 }
 
 function getNumberOfProjects(next) {
-  db.collection("projects").count({
-    status: 'active'
-  }, next);
+  models.Project.count(next);
+}
+
+function getNumberOfNgos(next) {
+  models.Ngo.count(next);
 }
 
 function getNumOfProjWithMinOneMember(numberOfMembers, next) {
@@ -513,6 +515,9 @@ module.exports = {
       },
       numberOfProjects: function(callback) {
         getNumberOfProjects(callback);
+      },
+      numberOfNgos: function(callback) {
+        getNumberOfNgos(callback);
       },
       numberOfWellManagedProjects: function(callback) {
         getNumOfWellManagedProjects(callback);
