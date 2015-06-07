@@ -17,7 +17,33 @@ block content
                 tr
                   td Number of well managed
                   td {{dailyStats.numberOfWellManagedProjects}}
-        .col-md-3
+                tr
+                  td Number of countries
+                  td {{dailyStats.numberOfCountries}}
+                tr
+                  td Number of likes
+                  td {{dailyStats.numberOfLikes}}
+        .col-md-2
+          h2 Project Stats
+          .table-responsive
+            table.table
+              tr
+                td Pending Projects
+                td {{dailyStats.projectStats.pending}}
+                td {{dailyStats.projectStats.pendingPerc}}%
+              tr
+                td Draft Projects
+                td {{dailyStats.projectStats.draft}}
+                td {{dailyStats.projectStats.draftPerc}}%
+              tr
+                td Approved Projects
+                td {{dailyStats.projectStats.active}}
+                td {{dailyStats.projectStats.activePerc}}%
+              tr
+                td Closed Projects
+                td {{dailyStats.projectStats.closed}}
+                td {{dailyStats.projectStats.closedPerc}}%
+        .col-md-2
           h2 NGO Stats
           .table-responsive
             table.table
@@ -44,12 +70,35 @@ block content
               tr
                 td Open Positions
                 td {{dailyStats.volStats.openPositions}}
+                td {{dailyStats.volStats.openPositions*100/(dailyStats.volStats.openPositions+dailyStats.volStats.pendingPositions+dailyStats.volStats.takenPositions)| number:0}}%
               tr
                 td Pending Positions
                 td {{dailyStats.volStats.pendingPositions}}
+                td {{dailyStats.volStats.pendingPositions*100/(dailyStats.volStats.openPositions+dailyStats.volStats.pendingPositions+dailyStats.volStats.takenPositions)| number:0}}%
               tr
                 td Taken Positions
                 td {{dailyStats.volStats.takenPositions}}
+                td {{dailyStats.volStats.takenPositions*100/(dailyStats.volStats.openPositions+dailyStats.volStats.pendingPositions+dailyStats.volStats.takenPositions)| number:0}}%
+        .col-md-2
+          h2 User Stats
+          .table-responsive
+            table.table
+              tr
+                td Without skills
+                td {{dailyStats.userStats.withoutSkills}}
+                td {{dailyStats.userStats.withoutSkills*100/dailyStats.numberOfUsers|number:0}}%
+              tr
+                td Without interests
+                td {{dailyStats.userStats.withoutInterest}}
+                td {{dailyStats.userStats.withoutInterest*100/dailyStats.numberOfUsers|number:0}}%
+              tr
+                td Without slack
+                td {{dailyStats.userStats.withoutSlack}}
+                td {{dailyStats.userStats.withoutSlack*100/dailyStats.numberOfUsers|number:0}}%
+              tr
+                td Project owners
+                td {{dailyStats.userStats.projectOwners}}
+                td {{dailyStats.userStats.projectOwners*100/dailyStats.numberOfUsers|number:0}}%
     .container-fluid
       .row
         div(class="row")

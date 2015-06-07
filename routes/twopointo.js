@@ -50,6 +50,33 @@ function getNumberOfNgosByStatus(next) {
   });
 }
 
+function getNumberOfProjectsByStatus(next) {
+  models.Project.aggregate([{
+    $group: {
+      _id: '$status',
+      count: {
+        $sum: 1
+      }
+    }
+  }], function(err, projectStats) {
+    if (err) {
+      next(err);
+    } else {
+      var result = {};
+      for (var i = projectStats.length - 1; i >= 0; i--) {
+        result[projectStats[i]._id] = projectStats[i].count;
+      }
+      result.closed = result.closed ? result.closed : 0;
+      var allProjects = result.pending + result.draft + result.active + result.closed;
+      result.pendingPerc = parseInt(result.pending * 100 / allProjects);
+      result.draftPerc = parseInt(result.draft * 100 / allProjects);
+      result.activePerc = parseInt(result.active * 100 / allProjects);
+      result.closedPerc = parseInt(result.closed * 100 / allProjects);
+      next(null, result);
+    }
+  });
+}
+
 function getNumberOfProjects(next) {
   db.collection("projects").count({
     status: 'active'
@@ -80,10 +107,39 @@ function getNumOfWellManagedProjects(next) {
       $exists: true
     },
     $where: 'this.tasks.todo.length+this.tasks.done.length+this.tasks.doing.length>=3 && this.fileStore.files.length>=1',
-    repoUrl: {
-      $exists: true
+  }, next);
+}
+
+function getNumOfUsersWithoutSkills(next) {
+  models.User.count({
+    $where: 'this.linkedin.skills.length==0'
+  }, next);
+}
+
+function getNumberOfUsersWithoutInterests(next) {
+  models.User.count({
+    'linkedin.interests': {
+      $exists: false
     }
   }, next);
+}
+
+function getNumberOfUsersWithoutSlack(next) {
+  models.User.count({
+    'slackName': {
+      $exists: false
+    }
+  }, next);
+}
+
+function getNumberOfProjectOwners(next) {
+  models.Project.distinct('owner.shortId', function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      next(null, result.length);
+    }
+  });
 }
 
 function getNumberOfOpenPositions(next) {
@@ -181,6 +237,37 @@ function getNumberOfPendingPositions(next) {
   });
 }
 
+function getNumberOfLikes(next) {
+  models.Project.aggregate([{
+    $group: {
+      _id: null,
+      likes: {
+        $sum: '$numberOfCares'
+      }
+    }
+  }], function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      if (result && result.length > 0) {
+        next(null, result[0].likes);
+      } else {
+        next(null, 0);
+      }
+    }
+  });
+}
+
+function getNumberOfCountries(next) {
+  models.User.distinct('linkedin.countryCode', function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      next(null, result.length);
+    }
+  });
+}
+
 function getProjectsByStatusAndType(next) {
   models.Project.aggregate([{
     $group: {
@@ -208,6 +295,9 @@ module.exports = {
       ngoStats: function(callback) {
         getNumberOfNgosByStatus(callback);
       },
+      projectStats: function(callback) {
+        getNumberOfProjectsByStatus(callback);
+      },
       volStats: function(callback) {
         async.parallel({
           takenPositions: function(cb) {
@@ -220,6 +310,28 @@ module.exports = {
             getNumberOfPendingPositions(cb);
           }
         }, callback);
+      },
+      userStats: function(callback) {
+        async.parallel({
+          withoutSkills: function(cb) {
+            getNumOfUsersWithoutSkills(cb);
+          },
+          withoutInterest: function(cb) {
+            getNumberOfUsersWithoutInterests(cb);
+          },
+          withoutSlack: function(cb) {
+            getNumberOfUsersWithoutSlack(cb);
+          },
+          projectOwners: function(cb) {
+            getNumberOfProjectOwners(cb);
+          }
+        }, callback);
+      },
+      numberOfLikes: function(callback) {
+        getNumberOfLikes(callback);
+      },
+      numberOfCountries: function(callback) {
+        getNumberOfCountries(callback);
       },
       numberOfProjects: function(callback) {
         getNumberOfProjects(callback);
