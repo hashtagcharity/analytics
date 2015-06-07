@@ -43,6 +43,26 @@ block content
                 td Closed Projects
                 td {{dailyStats.projectStats.closed}}
                 td {{dailyStats.projectStats.closedPerc}}%
+              tr
+                td Without Links
+                td {{dailyStats.projMissingStats.withoutLinks}}
+                td {{dailyStats.projMissingStats.withoutLinks*100/dailyStats.numberOfProjects|number:0}}%
+              tr
+                td Without Files
+                td {{dailyStats.projMissingStats.withoutFiles}}
+                td {{dailyStats.projMissingStats.withoutFiles*100/dailyStats.numberOfProjects|number:0}}%
+              tr
+                td Without Repo
+                td {{dailyStats.projMissingStats.withoutRepo}}
+                td {{dailyStats.projMissingStats.withoutRepo*100/dailyStats.numberOfProjects|number:0}}%
+              tr
+                td Without Deadline
+                td {{dailyStats.projMissingStats.withoutDeadline}}
+                td {{dailyStats.projMissingStats.withoutDeadline*100/dailyStats.numberOfProjects|number:0}}%
+              tr
+                td Without Milestones
+                td {{dailyStats.projMissingStats.withoutMilestones}}
+                td {{dailyStats.projMissingStats.withoutMilestones*100/dailyStats.numberOfProjects|number:0}}%
         .col-md-2
           h2 NGO Stats
           .table-responsive

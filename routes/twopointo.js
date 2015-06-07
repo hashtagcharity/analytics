@@ -132,6 +132,63 @@ function getNumberOfUsersWithoutSlack(next) {
   }, next);
 }
 
+function getNumberOfProjectsWithoutLinks(next) {
+  models.Project.count({
+    status: 'active',
+    $or: [{
+      links: {
+        $exists: false
+      }
+    }, {
+      $where: 'this.links.length==0'
+    }]
+  }, next);
+}
+
+function getNumberOfProjectsWithoutMilestones(next) {
+  models.Project.count({
+    status: 'active',
+    $or: [{
+      mileStones: {
+        $exists: false
+      }
+    }, {
+      $where: 'this.mileStones.length==0'
+    }]
+  }, next);
+}
+
+function getNumberOfProjectsWithoutFiles(next) {
+  models.Project.count({
+    status: 'active',
+    $or: [{
+      'fileStore.files': {
+        $exists: false
+      }
+    }, {
+      $where: 'this.fileStore.files.length==0'
+    }]
+  }, next);
+}
+
+function getNumberOfProjectsWithoutRepo(next) {
+  models.Project.count({
+    status: 'active',
+    'repoUrl': {
+      $exists: false
+    }
+  }, next);
+}
+
+function getNumberOfProjectsWithoutDeadline(next) {
+  models.Project.count({
+    status: 'active',
+    'dueDate': {
+      $exists: false
+    }
+  }, next);
+}
+
 function getNumberOfProjectOwners(next) {
   models.Project.distinct('owner.shortId', function(err, result) {
     if (err) {
@@ -297,6 +354,25 @@ module.exports = {
       },
       projectStats: function(callback) {
         getNumberOfProjectsByStatus(callback);
+      },
+      projMissingStats: function(callback) {
+        async.parallel({
+          withoutLinks: function(cb) {
+            getNumberOfProjectsWithoutLinks(cb);
+          },
+          withoutFiles: function(cb) {
+            getNumberOfProjectsWithoutFiles(cb);
+          },
+          withoutDeadline: function(cb) {
+            getNumberOfProjectsWithoutDeadline(cb);
+          },
+          withoutRepo: function(cb) {
+            getNumberOfProjectsWithoutRepo(cb);
+          },
+          withoutMilestones: function(cb) {
+            getNumberOfProjectsWithoutMilestones(cb);
+          }
+        }, callback);
       },
       volStats: function(callback) {
         async.parallel({
