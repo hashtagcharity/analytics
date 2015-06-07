@@ -77,6 +77,31 @@ function getNumberOfProjectsByStatus(next) {
   });
 }
 
+function getNumberOfProjectsByType(next) {
+  models.Project.aggregate([{
+    $match: {
+      status: 'active'
+    }
+  }, {
+    $group: {
+      _id: '$type',
+      count: {
+        $sum: 1
+      }
+    }
+  }], function(err, projectStats) {
+    if (err) {
+      next(err);
+    } else {
+      var result = {};
+      for (var i = projectStats.length - 1; i >= 0; i--) {
+        result[projectStats[i]._id] = projectStats[i].count;
+      }
+      next(null, result);
+    }
+  });
+}
+
 function getNumberOfProjects(next) {
   db.collection("projects").count({
     status: 'active'
@@ -106,7 +131,13 @@ function getNumOfWellManagedProjects(next) {
     "tasks.todo": {
       $exists: true
     },
-    $where: 'this.tasks.todo.length+this.tasks.done.length+this.tasks.doing.length>=3 && this.fileStore.files.length>=1',
+    "fileStore.files": {
+      $exists: true
+    },
+    "mileStones": {
+      $exists: true
+    },
+    $where: 'this.tasks.todo.length+this.tasks.done.length+this.tasks.doing.length>=3 && this.fileStore.files.length>=1 && this.mileStones.length>=2',
   }, next);
 }
 
@@ -141,6 +172,27 @@ function getNumberOfProjectsWithoutLinks(next) {
       }
     }, {
       $where: 'this.links.length==0'
+    }]
+  }, next);
+}
+
+function getNumberOfProjectsWithoutTodos(next) {
+  models.Project.count({
+    status: 'active',
+    $or: [{
+      'tasks.todo': {
+        $exists: false
+      }
+    }, {
+      'tasks.doing': {
+        $exists: false
+      }
+    }, {
+      'tasks.done': {
+        $exists: false
+      }
+    }, {
+      $where: 'this.tasks.todo.length+this.tasks.done.length+this.tasks.doing.length==0'
     }]
   }, next);
 }
@@ -355,6 +407,9 @@ module.exports = {
       projectStats: function(callback) {
         getNumberOfProjectsByStatus(callback);
       },
+      projectsByType: function(callback) {
+        getNumberOfProjectsByType(callback);
+      },
       projMissingStats: function(callback) {
         async.parallel({
           withoutLinks: function(cb) {
@@ -371,6 +426,9 @@ module.exports = {
           },
           withoutMilestones: function(cb) {
             getNumberOfProjectsWithoutMilestones(cb);
+          },
+          withoutTodos: function(cb) {
+            getNumberOfProjectsWithoutTodos(cb);
           }
         }, callback);
       },

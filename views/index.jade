@@ -15,8 +15,17 @@ block content
                   td Number of projects
                   td {{dailyStats.numberOfProjects}}
                 tr
-                  td Number of well managed
+                  td Number of general projects
+                  td {{dailyStats.projectsByType.general}}
+                  td {{dailyStats.projectsByType.general*100/dailyStats.numberOfProjects|number:0}}%
+                tr
+                  td Number of idea projects
+                  td {{dailyStats.projectsByType.idea}}
+                  td {{dailyStats.projectsByType.idea*100/dailyStats.numberOfProjects|number:0}}%
+                tr
+                  td Number of perfectly managed
                   td {{dailyStats.numberOfWellManagedProjects}}
+                  td {{dailyStats.numberOfWellManagedProjects*100/dailyStats.numberOfProjects|number:0}}%
                 tr
                   td Number of countries
                   td {{dailyStats.numberOfCountries}}
@@ -63,6 +72,10 @@ block content
                 td Without Milestones
                 td {{dailyStats.projMissingStats.withoutMilestones}}
                 td {{dailyStats.projMissingStats.withoutMilestones*100/dailyStats.numberOfProjects|number:0}}%
+              tr
+                td Without ToDos
+                td {{dailyStats.projMissingStats.withoutTodos}}
+                td {{dailyStats.projMissingStats.withoutTodos*100/dailyStats.numberOfProjects|number:0}}%
         .col-md-2
           h2 NGO Stats
           .table-responsive
