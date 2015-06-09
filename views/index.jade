@@ -167,6 +167,14 @@ block content
                 td #{skill.name}
                 td #{skill.count}
       .col-md-2
+        h3 Top Needed Skills
+        .table-responsive
+          table.table
+            each skill in tops.projectSkills
+              tr
+                td #{skill.name}
+                td #{skill.count}
+      .col-md-2
         h3 Top Companies
         .table-responsive
           table.table

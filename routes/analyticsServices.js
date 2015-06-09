@@ -44,6 +44,36 @@ var getTopSkills = function(next) {
     }
   }], next);
 };
+
+var getTopProjectSkills = function(next) {
+  db.collection("projects").aggregate([{
+    $unwind: "$skills"
+  }, {
+    $match: {
+      "skills": {
+        $exists: true
+      }
+    }
+  }, {
+    $group: {
+      _id: "$skills",
+      count: {
+        $sum: 1
+      }
+    }
+  }, {
+    $sort: {
+      count: -1
+    }
+  }, {
+    $limit: 10
+  }, {
+    $project: {
+      name: "$_id",
+      count: "$count"
+    }
+  }], next);
+};
 var getTopIndustries = function(next) {
   db.collection("users").aggregate([{
     $match: {
@@ -429,6 +459,9 @@ var self = module.exports = {
     async.parallel({
       skills: function(callback) {
         getTopSkills(callback);
+      },
+      projectSkills: function(callback) {
+        getTopProjectSkills(callback);
       },
       industries: function(callback) {
         getTopIndustries(callback);
