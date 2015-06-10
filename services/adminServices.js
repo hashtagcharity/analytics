@@ -36,6 +36,44 @@ function getProjectsByNgos(shortNames, next) {
 
 module.exports = {
 
+  getPendingProjectInfo: function(next) {
+    models.Project.find({
+      $where: 'this.team.waitlist.length>0'
+    }, function(err, projects) {
+      if (err) {
+        next(err);
+      } else {
+        var adminShortIds = _.map(projects, function(n) {
+          return n.owner.shortId;
+        });
+        models.User.find({
+            shortId: {
+              $in: adminShortIds
+            }
+          },
+          function(err, users) {
+            if (err) {
+              next(err);
+            } else {
+              var result = _.map(projects, function(p) {
+                var userIndex = _.findIndex(users, function(u) {
+                  return u.shortId === p.owner.shortId;
+                });
+                if (userIndex !== -1) {
+                  return {
+                    projectName: p.title,
+                    projectShortName: p.shortName,
+                    ownerName: users[userIndex].name,
+                    ownerEmail: users[userIndex].linkedin.email
+                  };
+                }
+              });
+              next(null, result);
+            }
+          });
+      }
+    });
+  },
   getNgosWithoutProjects: function(next) {
     getNgosWithProjects(function(err, ngoShortNames) {
       if (err) {

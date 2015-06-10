@@ -66,6 +66,22 @@
         }
       });
     });
+    app.get('/admin/pendingmembers', function(req, res) {
+      var adminServices = require('../services/adminServices');
+      adminServices.getPendingProjectInfo(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['title', 'shortName', 'name', 'email']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=pendingmemberprojectowners.csv');
+          res.csv(result);
+        }
+      });
+    });
+
 
     app.get('/admin/ngoswithoutprojects', function(req, res) {
       var adminServices = require('../services/adminServices');
