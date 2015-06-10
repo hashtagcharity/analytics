@@ -114,7 +114,8 @@ var getTopCompanies = function(next) {
   }, {
     $match: {
       "company.companyName": {
-        $exists: true
+        $exists: true,
+        $nin: [/.*fiedler|hashtagcharity|freelance.*/i, '']
       }
     }
   }, {
