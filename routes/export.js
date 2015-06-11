@@ -139,6 +139,35 @@
       });
     });
 
+    app.get('/export/draftprojects', function(req, res) {
+      exportServices.exportDraftProjects(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=draftprojects.csv');
+          res.csv(result);
+        }
+      });
+    });
+
+    app.get('/export/draftngos', function(req, res) {
+      exportServices.exportDraftNgos(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=draftngos.csv');
+          res.csv(result);
+        }
+      });
+    });
 
   };
 

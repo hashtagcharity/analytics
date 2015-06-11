@@ -28,7 +28,8 @@ block content
                 td Number of projects
                 td {{dailyStats.numberOfAllProjects}}
               tr
-                td Draft Projects
+                td
+                  a(href='/export/draftprojects',target='_blank') Draft Projects
                 td {{dailyStats.projectStats.draft}}
                 td {{dailyStats.projectStats.draftPerc}}%
               tr
@@ -97,7 +98,8 @@ block content
                 td {{dailyStats.ngoStats.pending}}
                 td {{dailyStats.ngoStats.pendingPerc}}%
               tr
-                td Draft NGOs
+                td
+                  a(href='/export/draftngos',target='_blank') Draft NGOs
                 td {{dailyStats.ngoStats.draft}}
                 td {{dailyStats.ngoStats.draftPerc}}%
               tr

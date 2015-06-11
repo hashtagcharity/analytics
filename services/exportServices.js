@@ -54,7 +54,6 @@ function prepareResultFromProject(projects, next) {
             isOwner: true
           });
         }
-        shortIds.push(p.owner.shortId);
         _.forEach(p.team.members, function(m) {
           var member = userDict[m.shortId];
           if (member) {
@@ -67,6 +66,38 @@ function prepareResultFromProject(projects, next) {
             });
           }
         });
+      });
+      next(null, result);
+    }
+  });
+}
+
+function prepareResultFromNgo(ngos, next) {
+  var shortIds = [];
+  _.forEach(ngos, function(p) {
+    shortIds.push(p.admin.shortId);
+  });
+  models.User.find({
+    shortId: {
+      $in: shortIds
+    }
+  }, function(err, users) {
+    if (err) {
+      next(err);
+    } else {
+      var userDict = transformUsersToDict(users);
+      var result = [];
+      _.forEach(ngos, function(p) {
+        var user = userDict[p.admin.shortId];
+        if (user) {
+          result.push({
+            name: p.name,
+            link: 'http://hashtagcharity.org/ngos/' + p.shortName,
+            user: user.linkedin.firstName,
+            email: user.linkedin.email,
+            isOwner: true
+          });
+        }
       });
       next(null, result);
     }
@@ -278,6 +309,28 @@ module.exports = {
         next(err);
       } else {
         prepareResultFromProject(projects, next);
+      }
+    });
+  },
+  exportDraftProjects: function(next) {
+    models.Project.find({
+      status: 'draft',
+    }, function(err, projects) {
+      if (err) {
+        next(err);
+      } else {
+        prepareResultFromProject(projects, next);
+      }
+    });
+  },
+  exportDraftNgos: function(next) {
+    models.Ngo.find({
+      status: 'draft',
+    }, function(err, ngos) {
+      if (err) {
+        next(err);
+      } else {
+        prepareResultFromNgo(ngos, next);
       }
     });
   }
