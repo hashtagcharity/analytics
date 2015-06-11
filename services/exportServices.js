@@ -328,5 +328,26 @@ module.exports = {
         prepareResultFromNgo(ngos, next);
       }
     });
+  },
+
+  exportPendingPositions: function(next) {
+    models.Project.find({
+      status: 'active',
+      $where: 'this.team.waitlist.length>0'
+    }, function(err, projects) {
+      if (err) {
+        next(err);
+      } else {
+        prepareResultFromProject(projects, function(err, result) {
+          if (err) {
+            next(err);
+          } else {
+            next(null, _.filter(result, function(p) {
+              return p.isOwner;
+            }));
+          }
+        });
+      }
+    });
   }
 };

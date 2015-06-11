@@ -121,7 +121,8 @@ block content
                 td {{dailyStats.volStats.openPositions}}
                 td {{dailyStats.volStats.openPositions*100/(dailyStats.volStats.openPositions+dailyStats.volStats.pendingPositions+dailyStats.volStats.takenPositions)| number:0}}%
               tr
-                td Pending Positions
+                td
+                  a(href='/export/pendingpositions',target='_blank') Pending Positions
                 td {{dailyStats.volStats.pendingPositions}}
                 td {{dailyStats.volStats.pendingPositions*100/(dailyStats.volStats.openPositions+dailyStats.volStats.pendingPositions+dailyStats.volStats.takenPositions)| number:0}}%
               tr

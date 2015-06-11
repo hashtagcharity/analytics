@@ -199,6 +199,21 @@
       });
     });
 
+    app.get('/export/pendingpositions', function(req, res) {
+      exportServices.exportPendingPositions(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=pendingpositions.csv');
+          res.csv(result);
+        }
+      });
+    });
+
   };
 
 
