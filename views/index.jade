@@ -52,27 +52,33 @@ block content
                 td {{dailyStats.numberOfWellManagedProjects}}
                 td {{dailyStats.numberOfWellManagedProjects*100/dailyStats.numberOfProjects|number:0}}%
               tr
-                td Without Links
+                td
+                  a(href='/export/withoutlinks',target='_blank') Without Links
                 td {{dailyStats.projMissingStats.withoutLinks}}
                 td {{dailyStats.projMissingStats.withoutLinks*100/dailyStats.numberOfProjects|number:0}}%
               tr
-                td Without Files
+                td
+                  a(href='/export/withoutfiles',target='_blank') Without Files
                 td {{dailyStats.projMissingStats.withoutFiles}}
                 td {{dailyStats.projMissingStats.withoutFiles*100/dailyStats.numberOfProjects|number:0}}%
               tr
-                td Without Repo
+                td
+                  a(href='/export/withoutrepo',target='_blank') Without Repo
                 td {{dailyStats.projMissingStats.withoutRepo}}
                 td {{dailyStats.projMissingStats.withoutRepo*100/dailyStats.numberOfProjects|number:0}}%
               tr
-                td Without Deadline
+                td
+                  a(href='/export/withoutdeadline',target='_blank') Without Deadline
                 td {{dailyStats.projMissingStats.withoutDeadline}}
                 td {{dailyStats.projMissingStats.withoutDeadline*100/dailyStats.numberOfProjects|number:0}}%
               tr
-                td Without Milestones
+                td
+                  a(href='/export/withoutmilestones',target='_blank') Without Milestones
                 td {{dailyStats.projMissingStats.withoutMilestones}}
                 td {{dailyStats.projMissingStats.withoutMilestones*100/dailyStats.numberOfProjects|number:0}}%
               tr
-                td Without ToDos
+                td
+                  a(href='/export/withouttodo',target='_blank') Without less than 3 ToDos
                 td {{dailyStats.projMissingStats.withoutTodos}}
                 td {{dailyStats.projMissingStats.withoutTodos*100/dailyStats.numberOfProjects|number:0}}%
               tr
@@ -133,7 +139,8 @@ block content
                 td {{dailyStats.userStats.withoutInterest}}
                 td {{dailyStats.userStats.withoutInterest*100/dailyStats.numberOfUsers|number:0}}%
               tr
-                td Without slack
+                td
+                  a(href='/export/withoutslack',target='_blank') Without slack
                 td {{dailyStats.userStats.withoutSlack}}
                 td {{dailyStats.userStats.withoutSlack*100/dailyStats.numberOfUsers|number:0}}%
               tr

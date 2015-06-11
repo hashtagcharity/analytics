@@ -204,7 +204,7 @@ function getNumberOfProjectsWithoutTodos(next) {
         $exists: false
       }
     }, {
-      $where: 'this.tasks.todo.length+this.tasks.done.length+this.tasks.doing.length==0'
+      $where: 'this.tasks.todo.length+this.tasks.done.length+this.tasks.doing.length<=3'
     }]
   }, next);
 }

@@ -31,6 +31,115 @@
         }
       });
     });
+
+    app.get('/export/withoutslack', function(req, res) {
+      exportServices.exportUserWithoutSlack(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['firstName', 'email']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=withoutslack.csv');
+          res.csv(result);
+        }
+      });
+    });
+
+    app.get('/export/withouttodo', function(req, res) {
+      exportServices.exportProjectWithoutTodo(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=withouttodo.csv');
+          res.csv(result);
+        }
+      });
+    });
+
+    app.get('/export/withoutfiles', function(req, res) {
+      exportServices.exportProjectWithoutFiles(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=withoutfiles.csv');
+          res.csv(result);
+        }
+      });
+    });
+
+    app.get('/export/withoutrepo', function(req, res) {
+      exportServices.exportProjectWithoutRepo(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=withoutrepo.csv');
+          res.csv(result);
+        }
+      });
+    });
+
+    app.get('/export/withoutdeadline', function(req, res) {
+      exportServices.exportProjectWithoutDeadline(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=withoutdeadline.csv');
+          res.csv(result);
+        }
+      });
+    });
+
+
+    app.get('/export/withoutlinks', function(req, res) {
+      exportServices.exportProjectWithoutLinks(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=withoutlinks.csv');
+          res.csv(result);
+        }
+      });
+    });
+
+
+    app.get('/export/withoutmilestones', function(req, res) {
+      exportServices.exportProjectWithoutMilestones(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=withoutmilestones.csv');
+          res.csv(result);
+        }
+      });
+    });
+
+
   };
 
 
