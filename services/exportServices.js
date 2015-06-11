@@ -174,32 +174,6 @@ module.exports = {
       }
     });
   },
-  exportProjectWithoutTodo: function(next) {
-    models.Project.find({
-      status: 'active',
-      $or: [{
-        'tasks.todo': {
-          $exists: false
-        }
-      }, {
-        'tasks.doing': {
-          $exists: false
-        }
-      }, {
-        'tasks.done': {
-          $exists: false
-        }
-      }, {
-        $where: 'this.tasks.todo.length+this.tasks.done.length+this.tasks.doing.length==0'
-      }]
-    }, function(err, projects) {
-      if (err) {
-        next(err);
-      } else {
-        prepareResultFromProject(projects, next);
-      }
-    });
-  },
 
   exportProjectWithoutTodo: function(next) {
     models.Project.find({
