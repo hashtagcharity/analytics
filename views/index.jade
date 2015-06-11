@@ -33,7 +33,8 @@ block content
                 td {{dailyStats.projectStats.draft}}
                 td {{dailyStats.projectStats.draftPerc}}%
               tr
-                td Pending Projects
+                td
+                  a(href='/export/pendingprojects',target='_blank') Pending Projects
                 td {{dailyStats.projectStats.pending}}
                 td {{dailyStats.projectStats.pendingPerc}}%
               tr

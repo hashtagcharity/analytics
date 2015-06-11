@@ -154,6 +154,21 @@
       });
     });
 
+    app.get('/export/pendingprojects', function(req, res) {
+      exportServices.exportPendingProjects(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=pendingprojects.csv');
+          res.csv(result);
+        }
+      });
+    });
+
     app.get('/export/draftngos', function(req, res) {
       exportServices.exportDraftNgos(function(err, result) {
         if (err) {
@@ -161,7 +176,7 @@
             error: err
           });
         } else {
-          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          result.unshift(['name', 'link', 'member', 'email']);
           res.set('Content-Type', 'text/csv');
           res.setHeader('Content-disposition', 'attachment; filename=draftngos.csv');
           res.csv(result);

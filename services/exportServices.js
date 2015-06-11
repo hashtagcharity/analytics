@@ -94,8 +94,7 @@ function prepareResultFromNgo(ngos, next) {
             name: p.name,
             link: 'http://hashtagcharity.org/ngos/' + p.shortName,
             user: user.linkedin.firstName,
-            email: user.linkedin.email,
-            isOwner: true
+            email: user.linkedin.email
           });
         }
       });
@@ -289,6 +288,17 @@ module.exports = {
   exportDraftProjects: function(next) {
     models.Project.find({
       status: 'draft',
+    }, function(err, projects) {
+      if (err) {
+        next(err);
+      } else {
+        prepareResultFromProject(projects, next);
+      }
+    });
+  },
+  exportPendingProjects: function(next) {
+    models.Project.find({
+      status: 'pending',
     }, function(err, projects) {
       if (err) {
         next(err);
