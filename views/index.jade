@@ -123,11 +123,13 @@ block content
           .table-responsive
             table.table
               tr
-                td Without skills
+                td
+                  a(href='/export/withoutskills',target='_blank') Without skills
                 td {{dailyStats.userStats.withoutSkills}}
                 td {{dailyStats.userStats.withoutSkills*100/dailyStats.numberOfUsers|number:0}}%
               tr
-                td Without interests
+                td
+                  a(href='/export/withoutinterests',target='_blank') Without interests
                 td {{dailyStats.userStats.withoutInterest}}
                 td {{dailyStats.userStats.withoutInterest*100/dailyStats.numberOfUsers|number:0}}%
               tr

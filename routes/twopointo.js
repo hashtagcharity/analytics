@@ -157,9 +157,13 @@ function getNumOfUsersWithoutSkills(next) {
 
 function getNumberOfUsersWithoutInterests(next) {
   models.User.count({
-    'linkedin.interests': {
-      $exists: false
-    }
+    $or: [{
+      'linkedin.interests': {
+        $exists: false
+      }
+    }, {
+      'linkedin.interests': ''
+    }]
   }, next);
 }
 

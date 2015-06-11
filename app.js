@@ -27,8 +27,10 @@ var mr = global.mr = require('./models/modelResolver');
 mr.mapModels();
 var indexController = require('./routes/index');
 var adminController = require('./routes/admin');
+var exportController = require('./routes/export');
 indexController.init(app);
 adminController.init(app);
+exportController.init(app);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
