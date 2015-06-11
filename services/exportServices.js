@@ -317,5 +317,16 @@ module.exports = {
         prepareResultFromNgo(ngos, next);
       }
     });
+  },
+  exportPendingNgos: function(next) {
+    models.Ngo.find({
+      status: 'pending',
+    }, function(err, ngos) {
+      if (err) {
+        next(err);
+      } else {
+        prepareResultFromNgo(ngos, next);
+      }
+    });
   }
 };

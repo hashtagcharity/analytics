@@ -184,6 +184,21 @@
       });
     });
 
+    app.get('/export/pendingngos', function(req, res) {
+      exportServices.exportPendingNgos(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=pendingngos.csv');
+          res.csv(result);
+        }
+      });
+    });
+
   };
 
 

@@ -95,7 +95,8 @@ block content
                 td Number of NGOs
                 td {{dailyStats.numberOfNgos}}
               tr
-                td Pending NGOs
+                td
+                  a(href='/export/pendingngos',target='_blank') Pending NGOs
                 td {{dailyStats.ngoStats.pending}}
                 td {{dailyStats.ngoStats.pendingPerc}}%
               tr
