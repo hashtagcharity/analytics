@@ -136,7 +136,10 @@ module.exports = {
             } else {
               async.map(users, function(user, next) {
                 models.SmartMatch.find({
-                  userId: user.shortId
+                  userId: user.shortId,
+                  impact: {
+                    $ne: 'Normal'
+                  }
                 }, function(err, matches) {
                   if (err) {
                     next(err);
