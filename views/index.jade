@@ -87,6 +87,11 @@ block content
                 td Closed Projects
                 td {{dailyStats.projectStats.closed}}
                 td {{dailyStats.projectStats.closedPerc}}%
+              tr
+                td
+                  a(href='/export/withoutcause',target='_blank') Without Cause
+                td {{dailyStats.projMissingStats.withoutCause}}
+                td {{dailyStats.projMissingStats.withoutCause*100/dailyStats.numberOfProjects|number:0}}%
         .col-md-2
           h2 NGO Stats
           .table-responsive

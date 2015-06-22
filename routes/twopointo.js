@@ -175,6 +175,19 @@ function getNumberOfUsersWithoutSlack(next) {
   }, next);
 }
 
+function getNumberOfUsersWithoutCause(next) {
+  models.Project.count({
+    status: 'active',
+    $or: [{
+      'cause': {
+        $exists: false
+      }
+    }, {
+      'cause': ''
+    }]
+  }, next);
+}
+
 function getNumberOfProjectsWithoutLinks(next) {
   models.Project.count({
     status: 'active',
@@ -485,6 +498,9 @@ module.exports = {
           },
           withoutTodos: function(cb) {
             getNumberOfProjectsWithoutTodos(cb);
+          },
+          withoutCause: function(cb) {
+            getNumberOfUsersWithoutCause(cb);
           }
         }, callback);
       },

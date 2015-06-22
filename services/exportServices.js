@@ -234,7 +234,32 @@ module.exports = {
       }
     });
   },
-
+  exportProjectWithoutCause: function(next) {
+    models.Project.find({
+      status: 'active',
+      $or: [{
+        'cause': {
+          $exists: false
+        }
+      }, {
+        'cause': ''
+      }]
+    }, function(err, projects) {
+      if (err) {
+        next(err);
+      } else {
+        prepareResultFromProject(projects, function(err, result) {
+          if (err) {
+            next(err);
+          } else {
+            next(null, _.filter(result, function(p) {
+              return p.isOwner;
+            }));
+          }
+        });
+      }
+    });
+  },
   exportProjectWithoutDeadline: function(next) {
     models.Project.find({
       status: 'active',

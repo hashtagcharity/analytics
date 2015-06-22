@@ -123,6 +123,20 @@
       });
     });
 
+    app.get('/export/withoutcause', function(req, res) {
+      exportServices.exportProjectWithoutCause(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=withoutlinks.csv');
+          res.csv(result);
+        }
+      });
+    });
 
     app.get('/export/withoutmilestones', function(req, res) {
       exportServices.exportProjectWithoutMilestones(function(err, result) {

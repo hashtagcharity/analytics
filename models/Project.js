@@ -106,6 +106,12 @@ var projectSchema = mongoose.Schema({
   skills: [String],
   repoUrl: String,
   resultUrl: String,
+  impact: {
+    directImpact: String,
+    savedMoney: String,
+    savingImpact: String
+  },
+  cause: String,
   fileStore: {
     _id: false,
     maxSize: {
@@ -204,7 +210,8 @@ projectSchema.methods.toCardStyle = function() {
     skills: this.skills,
     memberCount: this.team.members.length,
     maxMembers: this.team.maxMembers,
-    numberOfCares: this.numberOfCares
+    numberOfCares: this.numberOfCares,
+    resultUrl: this.resultUrl
   };
 };
 
