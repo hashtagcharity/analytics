@@ -1,5 +1,6 @@
 (function(exportController) {
   var exportServices = require('../services/exportServices');
+  var analyticsServices = require('./analyticsServices');
 
   exportController.init = function(app) {
     app.get('/export/withoutskills', function(req, res) {
@@ -254,6 +255,36 @@
           result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
           res.set('Content-Type', 'text/csv');
           res.setHeader('Content-disposition', 'attachment; filename=pendingpositions.csv');
+          res.csv(result);
+        }
+      });
+    });
+
+    app.get('/export/usersbyweek', function(req, res) {
+      analyticsServices.getUsersByWeek(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['dates', 'count', 'sum']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=usersbyweek.csv');
+          res.csv(result);
+        }
+      });
+    });
+
+    app.get('/export/projectsbyweek', function(req, res) {
+      analyticsServices.getProjectsByWeek(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['dates', 'count', 'sum']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=projectsbyweek.csv');
           res.csv(result);
         }
       });

@@ -21,7 +21,8 @@ block content
                   td Number of likes
                   td {{dailyStats.numberOfLikes}}
         .col-md-3
-          h2 Project Stats
+          h2
+            a(href='/export/projectsbyweek',target='_blank') Project Stats
           .table-responsive
             table.table
               tr
@@ -137,7 +138,8 @@ block content
                 td {{dailyStats.volStats.takenPositions}}
                 td {{dailyStats.volStats.takenPositions*100/(dailyStats.volStats.openPositions+dailyStats.volStats.pendingPositions+dailyStats.volStats.takenPositions)| number:0}}%
         .col-md-2
-          h2 User Stats
+          h2
+            a(href='/export/usersbyweek',target='_blank') User Stats
           .table-responsive
             table.table
               tr

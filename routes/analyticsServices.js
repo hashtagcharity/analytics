@@ -254,11 +254,12 @@ function getUserStats(next) {
   }], next);
 }
 
-function getProjectStats(next) {
+function getProjectStats(onlyActive, next) {
+  var statusFilter = onlyActive ? {
+    status: 'active'
+  } : {};
   db.collection('projects').aggregate([{
-    $match: {
-      status: 'active'
-    }
+    $match: statusFilter
   }, {
     $project: {
       year: {
@@ -419,6 +420,44 @@ function transformSeries(rFrom, rTo, series) {
     return [];
   }
 }
+
+function transformSeriesByWeek(series) {
+  if (series.length > 0) {
+    var firstDate = _.first(series).date;
+    firstDate.clearTime();
+
+    var result = _.chain(series)
+      .groupBy(function(r) {
+        var timeDiff = Math.abs(r.date.getTime() - firstDate.getTime());
+        var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        return parseInt(diffDays / 7, 10);
+      }).map(function(value, key) {
+        var startDate = new Date(firstDate);
+        startDate.setDate(firstDate.getDate() + key * 7);
+        var endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 6);
+        return {
+          dates: startDate.toDateString() + ' - ' + endDate.toDateString(),
+          count: _.reduce(value, function(memo, newO) {
+            return memo + newO.count;
+          }, 0)
+        };
+      })
+      .value();
+    var n = result.length;
+    for (var i = 0; i < n; i++) {
+      var sum = 0;
+      for (var j = 0; j <= i; j++) {
+        sum += result[j].count;
+      }
+      result[i].sum = sum;
+    }
+    return result;
+  } else {
+    return [];
+  }
+}
+
 var self = module.exports = {
   getUserStatistics: function(rFrom, rTo, next) {
     db = global.db;
@@ -434,7 +473,7 @@ var self = module.exports = {
         });
       },
       projects: function(callback) {
-        getProjectStats(function(err, result) {
+        getProjectStats(true, function(err, result) {
           if (err) {
             callback(err);
           } else {
@@ -481,5 +520,25 @@ var self = module.exports = {
   getCountryCodes: function(next) {
     db = global.db;
     db.collection("users").distinct("linkedin.countryCode", next);
+  },
+  getUsersByWeek: function(next) {
+    getUserStats(function(err, result) {
+      if (err) {
+        next(err);
+      } else {
+        var transformedResult = transformSeriesByWeek(result);
+        next(null, transformedResult);
+      }
+    });
+  },
+  getProjectsByWeek: function(next) {
+    getProjectStats(false, function(err, result) {
+      if (err) {
+        next(err);
+      } else {
+        var transformedResult = transformSeriesByWeek(result);
+        next(null, transformedResult);
+      }
+    });
   }
 };
