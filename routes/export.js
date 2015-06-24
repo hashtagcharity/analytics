@@ -123,6 +123,22 @@
       });
     });
 
+    app.get('/export/allprojects', function(req, res) {
+      exportServices.exportAllProjects(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=allprojectowners.csv');
+          res.csv(result);
+        }
+      });
+    });
+
+
     app.get('/export/withoutcause', function(req, res) {
       exportServices.exportProjectWithoutCause(function(err, result) {
         if (err) {
@@ -132,7 +148,7 @@
         } else {
           result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
           res.set('Content-Type', 'text/csv');
-          res.setHeader('Content-disposition', 'attachment; filename=withoutlinks.csv');
+          res.setHeader('Content-disposition', 'attachment; filename=withoutcause.csv');
           res.csv(result);
         }
       });
@@ -193,6 +209,21 @@
           result.unshift(['name', 'link', 'member', 'email']);
           res.set('Content-Type', 'text/csv');
           res.setHeader('Content-disposition', 'attachment; filename=draftngos.csv');
+          res.csv(result);
+        }
+      });
+    });
+
+    app.get('/export/allngos', function(req, res) {
+      exportServices.exportAllNgos(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=allngoadmins.csv');
           res.csv(result);
         }
       });

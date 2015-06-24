@@ -25,7 +25,8 @@ block content
           .table-responsive
             table.table
               tr
-                td Number of projects
+                td
+                  a(href='/export/allprojects',target='_blank') Number of projects
                 td {{dailyStats.numberOfAllProjects}}
               tr
                 td
@@ -97,7 +98,8 @@ block content
           .table-responsive
             table.table
               tr
-                td Number of NGOs
+                td
+                  a(href='/export/allngos',target='_blank') Number of NGOs
                 td {{dailyStats.numberOfNgos}}
               tr
                 td

@@ -234,6 +234,23 @@ module.exports = {
       }
     });
   },
+  exportAllProjects: function(next) {
+    models.Project.find({}, function(err, projects) {
+      if (err) {
+        next(err);
+      } else {
+        prepareResultFromProject(projects, function(err, result) {
+          if (err) {
+            next(err);
+          } else {
+            next(null, _.filter(result, function(p) {
+              return p.isOwner;
+            }));
+          }
+        });
+      }
+    });
+  },
   exportProjectWithoutCause: function(next) {
     models.Project.find({
       status: 'active',
@@ -347,6 +364,16 @@ module.exports = {
     models.Ngo.find({
       status: 'pending',
     }, function(err, ngos) {
+      if (err) {
+        next(err);
+      } else {
+        prepareResultFromNgo(ngos, next);
+      }
+    });
+  },
+
+  exportAllNgos: function(next) {
+    models.Ngo.find({}, function(err, ngos) {
       if (err) {
         next(err);
       } else {
