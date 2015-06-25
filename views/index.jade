@@ -94,6 +94,11 @@ block content
                   a(href='/export/withoutcause',target='_blank') Without Cause
                 td {{dailyStats.projMissingStats.withoutCause}}
                 td {{dailyStats.projMissingStats.withoutCause*100/dailyStats.numberOfProjects|number:0}}%
+              tr
+                td
+                  a(href='/export/withoutimpact',target='_blank') Without Impact
+                td {{dailyStats.projMissingStats.withoutImpact}}
+                td {{dailyStats.projMissingStats.withoutImpact*100/dailyStats.numberOfProjects|number:0}}%
         .col-md-2
           h2 NGO Stats
           .table-responsive

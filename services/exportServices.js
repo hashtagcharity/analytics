@@ -277,6 +277,29 @@ module.exports = {
       }
     });
   },
+  exportProjectWithoutImpact: function(next) {
+    models.Project.find({
+        status: 'active',
+        'impact': {
+          $exists: false
+        }
+      },
+      function(err, projects) {
+        if (err) {
+          next(err);
+        } else {
+          prepareResultFromProject(projects, function(err, result) {
+            if (err) {
+              next(err);
+            } else {
+              next(null, _.filter(result, function(p) {
+                return p.isOwner;
+              }));
+            }
+          });
+        }
+      });
+  },
   exportProjectWithoutDeadline: function(next) {
     models.Project.find({
       status: 'active',
