@@ -175,10 +175,19 @@ function getNumberOfUsersWithoutSlack(next) {
   }, next);
 }
 
-function getNumberOfProjectsWithoutImpact(next) {
+function getNumberOfProjectsWithoutSavedMoney(next) {
   models.Project.count({
     status: 'active',
-    'impact': {
+    'impact.savedMoney': {
+      $exists: false
+    }
+  }, next);
+}
+
+function getNumberOfProjectsWithoutPeopleHelped(next) {
+  models.Project.count({
+    status: 'active',
+    'impact.peopleHelped': {
       $exists: false
     }
   }, next);
@@ -303,6 +312,48 @@ function getNumberOfOpenPositions(next) {
       _id: null,
       sum: {
         $sum: "$openPositions"
+      }
+    }
+  }], function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      if (result && result.length > 0) {
+        next(null, result[0].sum);
+      } else {
+        next(null, 0);
+      }
+    }
+  });
+}
+
+function getSavedDollars(next) {
+  models.Project.aggregate([{
+    $group: {
+      _id: null,
+      sum: {
+        $sum: '$impact.savedMoney'
+      }
+    }
+  }], function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      if (result && result.length > 0) {
+        next(null, result[0].sum);
+      } else {
+        next(null, 0);
+      }
+    }
+  });
+}
+
+function getPeopleHelped(next) {
+  models.Project.aggregate([{
+    $group: {
+      _id: null,
+      sum: {
+        $sum: '$impact.peopleHelped'
       }
     }
   }], function(err, result) {
@@ -511,8 +562,11 @@ module.exports = {
           withoutCause: function(cb) {
             getNumberOfUsersWithoutCause(cb);
           },
-          withoutImpact: function(cb) {
-            getNumberOfProjectsWithoutImpact(cb);
+          withoutSavedMoney: function(cb) {
+            getNumberOfProjectsWithoutSavedMoney(cb);
+          },
+          withoutPeopleHelped: function(cb) {
+            getNumberOfProjectsWithoutPeopleHelped(cb);
           }
         }, callback);
       },
@@ -562,6 +616,12 @@ module.exports = {
       },
       numberOfWellManagedProjects: function(callback) {
         getNumOfWellManagedProjects(callback);
+      },
+      savedDollars: function(callback) {
+        getSavedDollars(callback);
+      },
+      peopleHelped: function(callback) {
+        getPeopleHelped(callback);
       }
     }, next);
   },

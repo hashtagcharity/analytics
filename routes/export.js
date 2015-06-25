@@ -155,8 +155,8 @@
       });
     });
 
-    app.get('/export/withoutimpact', function(req, res) {
-      exportServices.exportProjectWithoutImpact(function(err, result) {
+    app.get('/export/withoutsavedmoney', function(req, res) {
+      exportServices.exportProjectWithoutSavedMoney(function(err, result) {
         if (err) {
           res.status(500).send({
             error: err
@@ -164,7 +164,22 @@
         } else {
           result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
           res.set('Content-Type', 'text/csv');
-          res.setHeader('Content-disposition', 'attachment; filename=withoutimpact.csv');
+          res.setHeader('Content-disposition', 'attachment; filename=withoutsavedmoney.csv');
+          res.csv(result);
+        }
+      });
+    });
+
+    app.get('/export/withoutpeoplehelped', function(req, res) {
+      exportServices.exportProjectWithoutPeopleHelped(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=withoutpeoplehelped.csv');
           res.csv(result);
         }
       });

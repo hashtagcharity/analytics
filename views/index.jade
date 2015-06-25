@@ -20,6 +20,12 @@ block content
                 tr
                   td Number of likes
                   td {{dailyStats.numberOfLikes}}
+                tr
+                  td Saved dollars
+                  td {{dailyStats.savedDollars| currency:"$":0}}
+                tr
+                  td People helped
+                  td {{dailyStats.peopleHelped}}
         .col-md-3
           h2
             a(href='/export/projectsbyweek',target='_blank') Project Stats
@@ -96,9 +102,14 @@ block content
                 td {{dailyStats.projMissingStats.withoutCause*100/dailyStats.numberOfProjects|number:0}}%
               tr
                 td
-                  a(href='/export/withoutimpact',target='_blank') Without Impact
-                td {{dailyStats.projMissingStats.withoutImpact}}
-                td {{dailyStats.projMissingStats.withoutImpact*100/dailyStats.numberOfProjects|number:0}}%
+                  a(href='/export/withoutsavedmoney',target='_blank') Without Saved Money
+                td {{dailyStats.projMissingStats.withoutSavedMoney}}
+                td {{dailyStats.projMissingStats.withoutSavedMoney*100/dailyStats.numberOfProjects|number:0}}%
+              tr
+                td
+                  a(href='/export/withoutpeoplehelped',target='_blank') Without People Helped
+                td {{dailyStats.projMissingStats.withoutPeopleHelped}}
+                td {{dailyStats.projMissingStats.withoutPeopleHelped*100/dailyStats.numberOfProjects|number:0}}%
         .col-md-2
           h2 NGO Stats
           .table-responsive

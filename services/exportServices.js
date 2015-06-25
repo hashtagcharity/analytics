@@ -277,10 +277,33 @@ module.exports = {
       }
     });
   },
-  exportProjectWithoutImpact: function(next) {
+  exportProjectWithoutSavedMoney: function(next) {
     models.Project.find({
         status: 'active',
-        'impact': {
+        'impact.savedMoney': {
+          $exists: false
+        }
+      },
+      function(err, projects) {
+        if (err) {
+          next(err);
+        } else {
+          prepareResultFromProject(projects, function(err, result) {
+            if (err) {
+              next(err);
+            } else {
+              next(null, _.filter(result, function(p) {
+                return p.isOwner;
+              }));
+            }
+          });
+        }
+      });
+  },
+  exportProjectWithoutPeopleHelped: function(next) {
+    models.Project.find({
+        status: 'active',
+        'impact.peopleHelped': {
           $exists: false
         }
       },
