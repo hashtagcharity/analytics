@@ -329,6 +329,10 @@ function getNumberOfOpenPositions(next) {
 
 function getSavedDollars(next) {
   models.Project.aggregate([{
+    $match: {
+      status: 'active'
+    }
+  }, {
     $group: {
       _id: null,
       sum: {
@@ -350,6 +354,10 @@ function getSavedDollars(next) {
 
 function getPeopleHelped(next) {
   models.Project.aggregate([{
+    $match: {
+      status: 'active'
+    }
+  }, {
     $group: {
       _id: null,
       sum: {
