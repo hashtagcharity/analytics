@@ -447,5 +447,30 @@ module.exports = {
         });
       }
     });
+  },
+  exportImpacts: function(next) {
+    models.Project.find({
+        status: 'active',
+        'impact.directImpact': {
+          $exists: true
+        }
+      }, {
+        title: 1,
+        impact: 1
+      },
+      function(err, projects) {
+        if (err) {
+          next(err);
+        } else {
+          var result = _.map(projects, function(m) {
+            return {
+              title: m.title,
+              shortName: m.shortName,
+              impact: m.impact.directImpact
+            };
+          });
+          next(null, result);
+        }
+      });
   }
 };

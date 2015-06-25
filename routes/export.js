@@ -230,6 +230,21 @@
       });
     });
 
+    app.get('/export/impacts', function(req, res) {
+      exportServices.exportImpacts(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['shortName', 'title', 'text']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=impacts.csv');
+          res.csv(result);
+        }
+      });
+    });
+
     app.get('/export/draftngos', function(req, res) {
       exportServices.exportDraftNgos(function(err, result) {
         if (err) {
