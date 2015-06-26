@@ -149,6 +149,41 @@ function getNumOfWellManagedProjects(next) {
   }, next);
 }
 
+
+function getNumOfProjectsWithCollab(next) {
+  models.Project.count({
+      status: 'active',
+      $or: [{
+        "tasks.todo": {
+          $exists: true
+        },
+        "tasks.done": {
+          $exists: true
+        },
+        "tasks.doing": {
+          $exists: true
+        },
+        $where: 'this.tasks.todo.length+this.tasks.done.length+this.tasks.doing.length>=3',
+      }, {
+        "fileStore.files": {
+          $exists: true
+        },
+        $where: 'this.fileStore.files.length>=1'
+      }, {
+        "links": {
+          $exists: true
+        },
+        $where: 'this.links.length>=1'
+      }, {
+        "mileStones": {
+          $exists: true
+        },
+        $where: 'this.mileStones.length>=1'
+      }]
+    },
+    next);
+}
+
 function getNumOfUsersWithoutSkills(next) {
   models.User.count({
     $where: 'this.linkedin.skills.length==0'
@@ -630,6 +665,9 @@ module.exports = {
       },
       peopleHelped: function(callback) {
         getPeopleHelped(callback);
+      },
+      projectsWithCollab: function(callback) {
+        getNumOfProjectsWithCollab(callback);
       }
     }, next);
   },

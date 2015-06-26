@@ -65,6 +65,10 @@ block content
                 td {{dailyStats.numberOfWellManagedProjects}}
                 td {{dailyStats.numberOfWellManagedProjects*100/dailyStats.numberOfProjects|number:0}}%
               tr
+                td Number of projects with collaboration
+                td {{dailyStats.projectsWithCollab}}
+                td {{dailyStats.projectsWithCollab*100/dailyStats.numberOfProjects|number:0}}%
+              tr
                 td
                   a(href='/export/withoutlinks',target='_blank') Without Links
                 td {{dailyStats.projMissingStats.withoutLinks}}
