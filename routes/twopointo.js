@@ -7,6 +7,10 @@ function getNumberOfUsers(next) {
   db.collection("users").count(next);
 }
 
+function getNumberOfSkills(next) {
+  db.collection("skills").count(next);
+}
+
 function getNgosWithProjects(next) {
   models.Project.distinct('ngo.shortName', {
     status: {
@@ -178,7 +182,7 @@ function getNumOfProjectsWithCollab(next) {
         "mileStones": {
           $exists: true
         },
-        $where: 'this.mileStones.length>=1'
+        $where: 'this.mileStones.length>=2'
       }]
     },
     next);
@@ -569,6 +573,9 @@ module.exports = {
       },
       numberOfUsers: function(callback) {
         getNumberOfUsers(callback);
+      },
+      numberOfSkills: function(callback) {
+        getNumberOfSkills(callback);
       },
       numberOfCompanies: function(callback) {
         getNumberOfCompanies(callback);
