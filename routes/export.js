@@ -124,6 +124,22 @@
       });
     });
 
+    app.get('/export/wellmanaged', function(req, res) {
+      exportServices.exportWellManagedProjects(function(err, result) {
+        if (err) {
+          res.status(500).send({
+            error: err
+          });
+        } else {
+          result.unshift(['name', 'link', 'member', 'email', 'isOwner']);
+          res.set('Content-Type', 'text/csv');
+          res.setHeader('Content-disposition', 'attachment; filename=wellmanaged.csv');
+          res.csv(result);
+        }
+      });
+    });
+
+
     app.get('/export/allprojects', function(req, res) {
       exportServices.exportAllProjects(function(err, result) {
         if (err) {

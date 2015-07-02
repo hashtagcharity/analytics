@@ -395,6 +395,27 @@ module.exports = {
       }
     });
   },
+
+  exportWellManagedProjects: function(next) {
+    models.Project.find({
+      "tasks.todo": {
+        $exists: true
+      },
+      "fileStore.files": {
+        $exists: true
+      },
+      "mileStones": {
+        $exists: true
+      },
+      $where: 'this.tasks.todo.length+this.tasks.done.length+this.tasks.doing.length>=3 && this.fileStore.files.length>=1 && this.mileStones.length>=2',
+    }, function(err, projects) {
+      if (err) {
+        next(err);
+      } else {
+        prepareResultFromProject(projects, next);
+      }
+    });
+  },
   exportDraftNgos: function(next) {
     models.Ngo.find({
       status: 'draft',
