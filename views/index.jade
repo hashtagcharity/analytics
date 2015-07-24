@@ -188,6 +188,10 @@ block content
                 td Project owners
                 td {{dailyStats.userStats.projectOwners}}
                 td {{dailyStats.userStats.projectOwners*100/dailyStats.numberOfUsers|number:0}}%
+              tr
+                td With ForYou
+                td {{dailyStats.userStats.withForYou}}
+                td {{dailyStats.userStats.withForYou*100/dailyStats.numberOfUsers|number:0}}%
     .container-fluid
       .row
         div(class="row")

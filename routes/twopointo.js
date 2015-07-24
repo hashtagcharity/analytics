@@ -206,6 +206,12 @@ function getNumberOfUsersWithoutInterests(next) {
   }, next);
 }
 
+function getNumberOfUsersWithForYou(next) {
+  models.User.count({
+    foryouCompleted: true
+  }, next);
+}
+
 function getNumberOfUsersWithoutSlack(next) {
   models.User.count({
     'slackName': {
@@ -637,6 +643,9 @@ module.exports = {
         async.parallel({
           withoutSkills: function(cb) {
             getNumOfUsersWithoutSkills(cb);
+          },
+          withForYou: function(cb) {
+            getNumberOfUsersWithForYou(cb);
           },
           withoutInterest: function(cb) {
             getNumberOfUsersWithoutInterests(cb);
