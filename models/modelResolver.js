@@ -13,4 +13,6 @@ exports.mapModels = function() {
   global.models.ProjectChatMessage = require('./ProjectChatMessage');
   global.models.ProjectTaskComments = require('./ProjectTaskComments');
   global.models.SmartMatch = require('./SmartMatch');
+  global.models.UserInvite = require('./UserInvite');
+  global.models.Interest = require('./Interest');
 };

@@ -329,6 +329,21 @@ function getNumberOfProjectsWithoutDeadline(next) {
   }, next);
 }
 
+
+function getNumberOfInvites(next) {
+  models.UserInvite.count(next);
+}
+
+function getNumberOfInterests(next) {
+  models.Interest.distinct('name', function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      next(null, result.length);
+    }
+  });
+}
+
 function getNumberOfProjectOwners(next) {
   models.Project.distinct('owner.shortId', function(err, result) {
     if (err) {
@@ -663,6 +678,12 @@ module.exports = {
       },
       numberOfCountries: function(callback) {
         getNumberOfCountries(callback);
+      },
+      numberOfInvites: function(callback) {
+        getNumberOfInvites(callback);
+      },
+      numberOfInterests: function(callback) {
+        getNumberOfInterests(callback);
       },
       numberOfProjects: function(callback) {
         getNumberOfActiveProjects(callback);
